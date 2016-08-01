@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block body %}
+<div class="col-md-12" role="main">
+    <div style="border-radius: 25px; padding: 0 20px 20px; border: 2px solid #73AD21; margin: 25px 0px;">
+    <h2 align="center">Picture details</h2>
+    <table style="width:100%;
+                  border-collapse:separate;
+                  border-spacing: 5px;">
+       <tr>
+           <td style="border: 1px solid LightGray;
+                      border-radius: 5px;
+                      -moz-border-radius: 5px;
+                      padding: 5px;
+                      width:70%"
+               valign="top">
+               <img class="img-thumbnail"
+                    src="{{instance.picture.url}}"
+                    alt="{{instance.key}} {{instance.description}}"
+               />
+
+           </td>
+           <td style="border: 1px solid LightGray;
+                      border-radius: 5px;
+                      -moz-border-radius: 5px;
+                      padding: 5px;
+                      width:30%;"
+               valign="top">
+               <p align="left"><strong>Picture ID:</strong> {{instance.key}}</p>
+               <p align="left"><strong>Views count: </strong>{{instance.viewCounter}}</p>
+               <p align="left"><strong>Uploaded at: </strong>{{instance.uploadTime|date:"D, d F Y H:i:s "}}</p>
+               <p align="left"><strong>Last viewed at: </strong>{{instance.lastViewTime|date:"D, d F Y H:i:s "}}</p>
+               <div class="form-group form-group-sm">
+                    <label >Description:</label>
+                    <textarea class="form-control"
+                              align="left"
+                              style="white-space: normal;
+                                     text-align: justify;">
+                        {{instance.description|default:"Not specified"}}
+                    </textarea>
+                </div>
+           </td>
+       </tr>
+    </table>
+    </div>
+</div>
+{% endblock %}
