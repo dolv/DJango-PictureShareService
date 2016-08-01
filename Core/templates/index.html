@@ -1,5 +1,12 @@
 {% extends "base.html" %}
 {% block body %}
+<style>
+@media only screen and (max-width: 1200px) {
+    #popoverExample + div {
+       left: 45% !important;
+    }
+}
+</style>
 <div class="col-md-12 container" role="main">
 
     <form class="form-horizontal" action="" method="post" enctype="multipart/form-data"
@@ -8,34 +15,33 @@
       {{ form.non_field_errors }}
       <div class="form-group btn-default">
           <label class="col-md-2 control-label" for="{{ form.picture.id_for_label }}">Picture file for upload:</label>
-          <div class="col-md-5"
+          <div class="col-md-3"
+               container="div"
                id="popoverExample"
-            data-toggle="popover"
-            data-trigger="focus"
-            data-placement="right"
-            data-content="{{form.picture.errors.as_text}}">
-
-          {{ form.picture }}
-
+               data-toggle="popover"
+               data-trigger="focus"
+               data-placement="right"
+               data-content="{{form.picture.errors.as_text}}"
+               template='<div class="popover" role="tooltip">
+                            <div class="arrow"></div>
+                            <h3 class="popover-title"></h3>
+                            <div class="popover-content" style="background-color: #5bc0de; border-color: #46b8da;"></div>
+                         </div>'>
+              {{ form.picture }}
           </div>
-
-          <div class="col-md-5">
-
-
-            </div>
-          </div>
-          <div class="form-group form-group-sm btn-default" >
+      </div>
+      <div class="form-group form-group-sm btn-default" >
             {{form.description.errors}}
             <label class="col-md-2 control-label" style="padding-top: 8px;" for="{{ form.description.id_for_label }}">Picture description:</label>
             <div class="col-md-10" style="padding-top: 5px;">
             {{ form.description }}
             </div>
-          </div>
-          <div class="form-group">
+      </div>
+      <div class="form-group">
               <div class="col-md-10 col-md-offset-1" style="padding-top: 5px;">
-                <button type="submit" class="btn btn-info col-md-12">Submit</button>
+                <button type="submit" class="btn btn-info col-md-12 col-xs-12" >Submit</button>
               </div>
-          </div>
+      </div>
 
     </form>
 
@@ -96,7 +102,7 @@
         {% endfor %}
         </table>
         {% else %}
-        <h2 align="center" >No pictures found. Please proceeds and add some stuff.</h2>
+        <h2 align="center" style="white-space: normal;">No pictures found. Please proceeds and add some stuff.</h2>
         {% endif %}
     </div>
 
