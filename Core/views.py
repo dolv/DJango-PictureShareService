@@ -8,6 +8,7 @@ from django.contrib import messages
 from django.utils import timezone
 from django.utils.baseconv import base56
 from random import randint
+import hashlib
 
 # Create your views here.
 
@@ -34,19 +35,19 @@ class PictureUploadView(FormView):
 
     def add_queryset_to_ctx(self, ctx):
         queryset = list(self.model.objects.order_by('-uploadTime')[:self.pictures_to_show])
-        extended_queryset = []
-        for item in queryset:
-            if item.picture.height >= self.img_thumbnail['height']:
-                scale = self.img_thumbnail['height'] * 100 / item.picture.height
-            else:
-                scale = self.img_thumbnail['width'] * 100 / item.picture.width
-            size = {'height': item.picture.width * scale,
-                    'width': item.picture.width * scale
-                    }
-            extended_queryset.append({'picture': item,
-                                      'size': size})
-        queryset = [extended_queryset[x:x + self.pictures_in_a_raw] for x in
-                    range(0, len(extended_queryset), self.pictures_in_a_raw)]
+        # extended_queryset = []
+        # for item in queryset:
+        #     if item.picture.height >= self.img_thumbnail['height']:
+        #         scale = self.img_thumbnail['height'] * 100 / item.picture.height
+        #     else:
+        #         scale = self.img_thumbnail['width'] * 100 / item.picture.width
+        #     size = {'height': item.picture.width * scale,
+        #             'width': item.picture.width * scale
+        #             }
+        #     extended_queryset.append({'picture': item,
+        #                               'size': size})
+        # queryset = [extended_queryset[x:x + self.pictures_in_a_raw] for x in
+        #             range(0, len(extended_queryset), self.pictures_in_a_raw)]
         ctx.update({'queryset': queryset,
                     'td_width': str(100/self.pictures_in_a_raw)+'%'
                    })
@@ -67,12 +68,14 @@ class PictureUploadView(FormView):
         return render(request, self.template_name, ctx)
 
     def post(self, request, *args, **kwargs):
+        request.POST.__setitem__('key', self.gen_random_key())
+        request.POST.__setitem__('uploadTime', timezone.now())
         form = self.form_class(request.POST, request.FILES)
-        form.key = self.gen_random_key()
+
+        # str(hashlib.md5(request.FILES['picture'].file.read()).hexdigest())
         ctx = {'form': form}
         if form.is_valid():
             form.save(commit=True)
-            print(reverse(self.success_url))
             return HttpResponseRedirect(reverse(self.success_url))
         self.add_queryset_to_ctx(ctx)
         return render(request, self.template_name, ctx)

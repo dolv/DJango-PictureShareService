@@ -26,8 +26,7 @@ class Picture(models.Model):
     description = models.CharField(max_length=50, blank=True)
     key = models.SlugField(max_length=4,
                            unique=True,
-                           null=False,
-                           default=base56.encode(randint(0, 0x7fffff)))
+                           null=False)
     uploadTime = models.DateTimeField(default=timezone.now())
     lastViewTime = models.DateTimeField(null=True)
     viewCounter = models.PositiveIntegerField(default=0)

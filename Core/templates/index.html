@@ -45,7 +45,7 @@
 
     </form>
 
-    <div class="btn"
+ <div class="btn"
          style="border-radius: 25px;
                 margin-bottom: 20px;
                 padding: 0 20px 20px 20px;
@@ -53,55 +53,13 @@
                 display: block;" >
         {% if queryset %}
         <h2 align="center" style="white-space: normal;">Resently loaded pictures.</h2>
-        <table style="width:100%;
-                      border-collapse:separate;
-                      border-spacing: 5px;">
-        {% for line in queryset %}
-            <tr>
-            {% for item in line %}
-              <td style="border: 1px solid LightGray;
-                         border-radius: 5px;
-                         -moz-border-radius: 5px;
-                         padding: 5px;
-                         width:{{td_width}}"
-                   valign="top">
-                <p align="left"><strong>Picture ID:</strong> {{item.picture.key}}&emsp;&emsp;<strong>Views: </strong>{{item.picture.viewCounter}}</p>
-                <div class="row" style="margin:0;
-                                        line-height:10px;
-                                        border-spacing:0;">
-                    <div class="col-md-5"><p align="left"><strong>Uploaded at:</strong></p></div>
-                    <div class="col-md-2"><p align="left">{{item.picture.uploadTime|date:"d/n/Y H:i:s"}}</p></div>
-                </div>
-                <div class="row" style="margin:0;
-                                        line-height:10px;
-                                        border-spacing:0;">
-                    <div class="col-md-5"><p align="left"><strong>Last viewed at:</strong></p></div>
-                    <div class="col-md-2"><p align="left">{{item.picture.lastViewTime|date:"d/n/Y H:i:s"|default:"Not specified"}}</p></div>
-                </div>
-                <div class="btn btn-default">
-                    <a href="{{item.picture.key}}">
-                        <img class="img-thumbnail"
-                             src="{{item.picture.picture.url}}"
-                             width="{{ item.size.width }}"
-                             height="{{ item.size.height }}"
-                             alt="{{item.picture.key}} {{item.picture.description}}"
-                        />
-                    </a>
-                </div>
-                <div class="form-group form-group-sm">
-                    <label >Description:</label>
-                    <textarea class="form-control"
-                              align="left"
-                              style="white-space: normal;
-                                     text-align: justify;">
-                        {{item.picture.description|default:"Not specified"}}
-                    </textarea>
-                </div>
-              </td>
-            {% endfor %}
-            </tr>
+        <ul>
+        {% for item in queryset %}
+            <li>
+             {{item.picture.url}}
+            </li>
         {% endfor %}
-        </table>
+        </ul>
         {% else %}
         <h2 align="center" style="white-space: normal;">No pictures found. Please proceeds and add some stuff.</h2>
         {% endif %}
