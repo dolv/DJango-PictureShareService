@@ -21,35 +21,18 @@ import hashlib
 #    страница отдельной картинки
 
 
-
 class PictureUploadView(FormView):
     form_class = PictureUploadForm
     model = Picture
     pictures_in_a_raw = 4
     pictures_to_show = 12
-    context_object_name = "files"
     success_url = 'home-page'
     template_name = "index.html"
-    img_thumbnail = {'height': 300,
-                     'width': 300}
 
     def add_queryset_to_ctx(self, ctx):
         queryset = list(self.model.objects.order_by('-uploadTime')[:self.pictures_to_show])
-        # extended_queryset = []
-        # for item in queryset:
-        #     if item.picture.height >= self.img_thumbnail['height']:
-        #         scale = self.img_thumbnail['height'] * 100 / item.picture.height
-        #     else:
-        #         scale = self.img_thumbnail['width'] * 100 / item.picture.width
-        #     size = {'height': item.picture.width * scale,
-        #             'width': item.picture.width * scale
-        #             }
-        #     extended_queryset.append({'picture': item,
-        #                               'size': size})
-        # queryset = [extended_queryset[x:x + self.pictures_in_a_raw] for x in
-        #             range(0, len(extended_queryset), self.pictures_in_a_raw)]
         ctx.update({'queryset': queryset,
-                    'td_width': str(100/self.pictures_in_a_raw)+'%'
+                    'td_width': str(100/self.pictures_in_a_raw - self.pictures_in_a_raw/16)+'%'
                    })
     def gen_random_key(self):
         def get_new_key():
@@ -85,6 +68,7 @@ class PictureUploadView(FormView):
         messages.success(self.request, 'File uploaded!')
         return super(PictureUploadView, self).form_valid(form)
 
+
 class PicturePreviewPageView(FormView):
     form_class = PictureDetailsForm
     template_name = "picture_details.html"
@@ -98,4 +82,18 @@ class PicturePreviewPageView(FormView):
         instance.save()
         ctx = {'form': form,
                'instance': instance}
+        return render(request, self.template_name, ctx)
+
+
+class PopularView(ListView):
+    model = Picture
+    pictures_in_a_raw = 4
+    pictures_to_show = 12
+    template_name = "popular.html"
+
+    def get(self, request):
+        queryset = list(self.model.objects.all()[:self.pictures_to_show])
+        ctx = ({'queryset': queryset,
+               'td_width': str(100 / self.pictures_in_a_raw - self.pictures_in_a_raw / 16) + '%'
+              })
         return render(request, self.template_name, ctx)

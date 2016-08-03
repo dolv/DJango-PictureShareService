@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 {% block body %}
 <div class="col-md-12" role="main">
-    <div style="border-radius: 25px; padding: 0 20px 20px; border: 2px solid #73AD21; margin: 25px 0px;">
+    <div style="border-radius: 25px; padding: 0 20px 20px; border: 2px solid #73AD21; margin: 0 0 25px 0px;">
     <h2 align="center">Picture details</h2>
     <table style="width:100%;
                   border-collapse:separate;
@@ -29,13 +29,15 @@
                <p align="left"><strong>Views count: </strong>{{instance.viewCounter}}</p>
                <p align="left"><strong>Uploaded at: </strong>{{instance.uploadTime|date:"D, d F Y H:i:s "}}</p>
                <p align="left"><strong>Last viewed at: </strong>{{instance.lastViewTime|date:"D, d F Y H:i:s "}}</p>
+               <p align="left"><strong>File Size: </strong>{{instance.picture.size|filesizeformat}}</p>
+               <p align="left"><strong>Hight: </strong>{{instance.picture.height}} px</p>
+               <p align="left"><strong>Width: </strong>{{instance.picture.width}} px</p>
                <div class="form-group form-group-sm">
                     <label >Description:</label>
                     <textarea class="form-control"
                               align="left"
                               style="white-space: normal;
-                                     text-align: justify;">
-                        {{instance.description|default:"Not specified"}}
+                                     text-align: justify;">{{instance.description|default:"Not specified"}}
                     </textarea>
                 </div>
            </td>

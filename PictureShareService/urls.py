@@ -18,7 +18,7 @@ from django.contrib import admin
 from django.conf.urls.static import static
 from django.conf import settings
 
-from Core.views import PictureUploadView, PicturePreviewPageView
+from Core.views import PictureUploadView, PicturePreviewPageView, PopularView
 
 # Страницы
 # /
@@ -29,6 +29,7 @@ from Core.views import PictureUploadView, PicturePreviewPageView
 #    страница отдельной картинки
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
+    url(r'^popular/$', PopularView.as_view(), name='popular'),
     url(r'^$', PictureUploadView.as_view(), name='home-page'),
     url(r'([\w\d]+)/$', PicturePreviewPageView.as_view(), name='picture-details'),
     ]

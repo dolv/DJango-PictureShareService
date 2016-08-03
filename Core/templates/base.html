@@ -18,7 +18,42 @@
     {% block head %}{% endblock %}
   </head>
   <body>
-    {% block header %}{% endblock %}
+    {% block header %}
+      <nav class="navbar navbar-default navbar-static" id="navbar-example">
+        <div class="container-fluid">
+          <div class="navbar-header">
+            <a href="/" class="navbar-brand" aria-label="Left Align"><span class="glyphicon glyphicon-home" aria-hidden="false"></span>  PictureShareService</a>
+          </div>
+          <div class="collapse navbar-collapse ">
+          <ul class="nav navbar-nav">
+            <li>
+              <a href="/"> Home </a>
+            </li>
+            <li>
+              <a href="/popular/"> Most popular</a>
+            </li>
+          </ul>
+          <ul class="nav navbar-nav navbar-right">
+            <li id="fat-menu" class="dropdown">
+              <a href="#" class="dropdown-toggle"
+                 id="drop3" data-toggle="dropdown"
+                 role="button" aria-haspopup="true"
+                 aria-expanded="false"> Dropdown <span class="caret"></span>
+              </a>
+              <ul class="dropdown-menu" aria-labelledby="drop3">
+                <li><a href="#">Action</a></li>
+                <li><a href="#">Another action</a></li>
+                <li><a href="#">Something else here</a></li>
+                <li role="separator" class="divider"></li>
+                <li><a href="#">Separated link</a></li>
+              </ul>
+            </li>
+          </ul>
+          </div>
+        </div>
+      </nav>
+
+    {% endblock %}
     {% block body %}{% endblock %}
     {% block footer %}{% endblock %}
   </body>
