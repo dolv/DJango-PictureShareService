@@ -75,6 +75,8 @@ class PicturePreviewPageView(FormView):
     model = Picture
 
     def get(self, request, key):
+        if request.path == '/favicon.ico/':
+            return HttpResponseRedirect("/static/favicon.ico")
         form = self.form_class(request.GET)
         instance = Picture.objects.get(key=key)
         instance.viewCounter += 1
