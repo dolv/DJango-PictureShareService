@@ -94,7 +94,7 @@ class PopularView(ListView):
     template_name = "popular.html"
 
     def get(self, request):
-        queryset = list(self.model.objects.all()[:self.pictures_to_show])
+        queryset = list(self.model.objects.order_by('-viewCounter')[:self.pictures_to_show])
         ctx = ({'queryset': queryset,
                'td_width': str(100 / self.pictures_in_a_raw - self.pictures_in_a_raw / 16) + '%'
               })
