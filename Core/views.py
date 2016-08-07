@@ -1,10 +1,10 @@
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
-from django.views.generic import FormView, ListView
+from django.views.generic import FormView, ListView, DetailView
 from .forms import PictureUploadForm, PictureDetailsForm
 from .models import Picture, Likes
 from django.core.urlresolvers import reverse_lazy, reverse
-from django.contrib import messages
+from django.contrib import auth, messages
 from django.utils import timezone
 from django.utils.baseconv import base56
 from random import randint
@@ -69,7 +69,7 @@ class PictureUploadView(FormView):
         return super(PictureUploadView, self).form_valid(form)
 
 
-class PicturePreviewPageView(FormView):
+class PicturePreviewPageView(DetailView):
     form_class = PictureDetailsForm
     template_name = "picture_details.html"
     model = Picture

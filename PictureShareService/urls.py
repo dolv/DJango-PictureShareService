@@ -31,6 +31,6 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^popular/$', PopularView.as_view(), name='popular'),
     url(r'^$', PictureUploadView.as_view(), name='home-page'),
-    url(r'([\w\d]+)/$', PicturePreviewPageView.as_view(), name='picture-details'),
+    url(r'^([\w\d-]+)/$', PicturePreviewPageView.as_view(), name='picture-details'),
     ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
