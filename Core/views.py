@@ -1,11 +1,15 @@
+from django.contrib.auth.decorators import login_required
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
-from django.views.generic import FormView, ListView, DetailView
-from .forms import PictureUploadForm, PictureDetailsForm
+from django.views.generic import View, FormView, ListView, DetailView
+from .forms import PictureUploadForm, PictureDetailsForm, AuthenticationForm
 from .models import Picture, Likes
 from django.core.urlresolvers import reverse_lazy, reverse
 from django.contrib import auth, messages
 from django.utils import timezone
+from django.utils.decorators import method_decorator
 from django.utils.baseconv import base56
 from random import randint
 import hashlib
@@ -31,9 +35,11 @@ class PictureUploadView(FormView):
 
     def add_queryset_to_ctx(self, ctx):
         queryset = list(self.model.objects.order_by('-uploadTime')[:self.pictures_to_show])
+        td_width = 100/self.pictures_in_a_raw - self.pictures_in_a_raw/16
         ctx.update({'queryset': queryset,
-                    'td_width': str(100/self.pictures_in_a_raw - self.pictures_in_a_raw/16)+'%'
-                   })
+                    'td_width': str(td_width)+'%',
+                    })
+
     def gen_random_key(self):
         def get_new_key():
             return base56.encode(randint(0, 0x7fffff))
@@ -50,6 +56,7 @@ class PictureUploadView(FormView):
         self.add_queryset_to_ctx(ctx)
         return render(request, self.template_name, ctx)
 
+    @method_decorator(login_required)
     def post(self, request, *args, **kwargs):
         request.POST.__setitem__('key', self.gen_random_key())
         request.POST.__setitem__('uploadTime', timezone.now())
@@ -63,20 +70,19 @@ class PictureUploadView(FormView):
         self.add_queryset_to_ctx(ctx)
         return render(request, self.template_name, ctx)
 
+
     def form_valid(self, form):
         form.save(commit=True)
         messages.success(self.request, 'File uploaded!')
         return super(PictureUploadView, self).form_valid(form)
 
 
-class PicturePreviewPageView(DetailView):
+class PicturePreviewPageView(LoginRequiredMixin, DetailView):
     form_class = PictureDetailsForm
     template_name = "picture_details.html"
     model = Picture
 
     def get(self, request, key):
-        if request.path == '/favicon.ico/':
-            return HttpResponseRedirect("/static/favicon.ico")
         form = self.form_class(request.GET)
         instance = Picture.objects.get(key=key)
         instance.viewCounter += 1
@@ -94,8 +100,33 @@ class PopularView(ListView):
     template_name = "popular.html"
 
     def get(self, request):
+        if request.url ==  "/static/favicon.ico/":
+            HttpResponseRedirect("/static/favicon.ico")
         queryset = list(self.model.objects.order_by('-viewCounter')[:self.pictures_to_show])
         ctx = ({'queryset': queryset,
                'td_width': str(100 / self.pictures_in_a_raw - self.pictures_in_a_raw / 16) + '%'
               })
         return render(request, self.template_name, ctx)
+
+
+class LoginView(FormView):
+    form_class = AuthenticationForm
+    template_name = 'user_auth/login.html'
+
+    def post(self, request, *args, **kwargs):
+        """
+        Same as django.views.generic.edit.ProcessFormView.post(), but adds test cookie stuff
+        """
+        username = request.POST.get('username', '')
+        password = request.POST.get('password', '')
+        user = authenticate(username=username, password=password)
+        if user is not None:
+            if user.is_active:
+                login(request, user)
+        return HttpResponseRedirect(request.GET.get('next', '/'))
+
+
+def logoutView(request):
+    if request.user.is_authenticated():
+        logout(request)
+        return HttpResponseRedirect('/');

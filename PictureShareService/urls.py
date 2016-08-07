@@ -13,12 +13,13 @@ Including another URLconf
     1. Import the include() function: from django.conf.urls import url, include
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
-from django.conf.urls import url, patterns
+from django.conf.urls import url
 from django.contrib import admin
 from django.conf.urls.static import static
 from django.conf import settings
+from django.http import HttpResponseRedirect
 
-from Core.views import PictureUploadView, PicturePreviewPageView, PopularView
+from Core import views as core_views
 
 # Страницы
 # /
@@ -27,10 +28,13 @@ from Core.views import PictureUploadView, PicturePreviewPageView, PopularView
 #     галерея популярных картинок
 # /<key>
 #    страница отдельной картинки
+
 urlpatterns = [
+    url(r'^user/login/$', core_views.LoginView.as_view(), name="login-page"),
+    url(r'^user/logout/$', core_views.logoutView, name="logout"),
     url(r'^admin/', admin.site.urls),
-    url(r'^popular/$', PopularView.as_view(), name='popular'),
-    url(r'^$', PictureUploadView.as_view(), name='home-page'),
-    url(r'^([\w\d-]+)/$', PicturePreviewPageView.as_view(), name='picture-details'),
+    url(r'^popular/$', core_views.PopularView.as_view(), name='popular'),
+    url(r'^$', core_views.PictureUploadView.as_view(), name='home-page'),
+    url(r'^([\w\d-]+)/$', core_views.PicturePreviewPageView.as_view(), name='picture-details'),
     ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

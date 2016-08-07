@@ -43,3 +43,4 @@ class Picture(models.Model):
 class Likes(models.Model):
     picture = models.ForeignKey('Picture', on_delete=models.CASCADE)
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True)
+

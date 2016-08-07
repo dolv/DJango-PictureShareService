@@ -33,26 +33,37 @@
               <a href="/popular/"> Most popular</a>
             </li>
           </ul>
+
           <ul class="nav navbar-nav navbar-right">
-            <li id="fat-menu" class="dropdown">
-              <a href="#" class="dropdown-toggle"
-                 id="drop3" data-toggle="dropdown"
-                 role="button" aria-haspopup="true"
-                 aria-expanded="false"> Dropdown <span class="caret"></span>
+            {% if user %}
+              {% if user.is_authenticated %}
+            <li class="dropdown">
+              <a href="#"
+                 class="dropdown-toggle navbar-brand"
+                 data-toggle="dropdown"
+                 role="button"
+                 aria-haspopup="true"
+                 aria-expanded="false">
+                <span class="glyphicon glyphicon-user"></span>
+                {{ user }}
+                <span class="caret"></span>
               </a>
               <ul class="dropdown-menu" aria-labelledby="drop3">
-                <li><a href="#">Action</a></li>
-                <li><a href="#">Another action</a></li>
-                <li><a href="#">Something else here</a></li>
+                <li><a href="#"><span class="glyphicon glyphicon-briefcase">Profile</span></a></li>
                 <li role="separator" class="divider"></li>
-                <li><a href="#">Separated link</a></li>
+                <li><a href="/user/logout/"><span class="glyphicon glyphicon-off">Logout</span></a></li>
               </ul>
             </li>
+              {% else %}
+            <li>
+              <a class="navbar-brand" href="/user/login/">Sign in</a>
+            </li>
+              {% endif %}
+            {% endif %}
           </ul>
           </div>
         </div>
       </nav>
-
     {% endblock %}
     {% block body %}{% endblock %}
     {% block footer %}{% endblock %}
