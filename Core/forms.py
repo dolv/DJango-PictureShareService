@@ -24,10 +24,12 @@ class PictureDetailsForm(forms.ModelForm):
                                         'style': 'white-space: normal; '
                                                  'text-align: justify;'},
                                  )
+    key = forms.SlugField(widget=forms.HiddenInput(),
+                          required=False)
 
     class Meta:
         model = Picture
-        fields = '__all__'
+        fields = ('description','key')
 
 
 class AuthenticationForm(forms.ModelForm):

@@ -1,6 +1,7 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth import authenticate, login, logout
+from django.http import HttpResponseBadRequest
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.views.generic import FormView, ListView, UpdateView, DeleteView
@@ -81,29 +82,23 @@ class PictureUploadView(FormView):
         return super(PictureUploadView, self).form_valid(form)
 
 
-class PicturePreviewPageView(DeleteView):
+class PicturePreviewPageView(LoginRequiredMixin, DeleteView):
     form_class = PictureDetailsForm
     template_name = "picture_details.html"
     model = Picture
-    success_url = reverse_lazy('home-page')
+    success_url = 'home-page'
 
     def get(self, request, key):
         if request.path == "/favicon.ico/":
             HttpResponseRedirect("/static/favicon.ico")
-        instance = Picture.objects.get(key=key)
+        instance = self.model.objects.get(key=key)
         instance.viewCounter += 1
         instance.lastViewTime = timezone.now()
         instance.save()
-
-        initaladata={'picture': instance.picture,
-                     'description': instance.description,
-                     'key': instance.key,
-                     'uploadTime': instance.uploadTime,
-                     'lastViewTime': instance.lastViewTime,
-                     'viewCounter': instance.viewCounter,
-                     'author': instance.author }
-        form_update = self.form_class(initial=initaladata)
-        form_delete = self.form_class(initial=initaladata)
+        form_update = self.form_class()
+        form_update.fields['key'].initial = instance.key
+        form_update.fields['description'].initial = instance.description
+        form_delete = self.form_class()
 
         ctx = {'form_update': form_update,
                'form_delete': form_delete,
@@ -113,7 +108,20 @@ class PicturePreviewPageView(DeleteView):
     def post(self, request, key):
         instance = get_object_or_404(Picture, key=key)
         instance.delete()
-        return HttpResponseRedirect('/')
+        return HttpResponseRedirect(reverse(self.success_url))
+
+
+class PictureUpdateView(LoginRequiredMixin, UpdateView):
+    form_class = PictureDetailsForm
+    model = Picture
+    success_url = 'picture-details'
+
+    def post(self, request):
+        instance = get_object_or_404(self.model, key=request.POST.get('key'))
+        form = self.form_class(request.POST, instance=instance)
+        form.save()
+        return HttpResponseRedirect(reverse(self.success_url, args=[instance.key]))
+
 
 class PopularView(ListView):
     model = Picture

@@ -33,16 +33,22 @@
                <p align="left"><strong>File Size: </strong>{{instance.picture.size|filesizeformat}}</p>
                <p align="left"><strong>Hight: </strong>{{instance.picture.height}} px</p>
                <p align="left"><strong>Width: </strong>{{instance.picture.width}} px</p>
-               {%if user == instance.author %}
-               <form name="form_update" action="" method="post">
+               {%if user == instance.author or user.is_superuser %}
+               <form name="form_update" action="/update/" method="post">
                    {% csrf_token %}
                    {{ form_update.non_field_errors }}
-                   {{ form_update.action }}
+                   {{ form_update.key }}
 
                <div class="form-group form-group-sm">
                     <label >Description:</label>
                     {{form_update.description}}
-                </div>
+               </div>
+               <button class="btn btn-info"
+                       type="submit"
+                       action="/update/"
+                       method="post">
+                   <strong><span class="glyphicon glyphicon-floppy-save"></span>&nbsp;Update picture</strong>
+               </button>
                </form>
                {%else%}
                <div class="form-group form-group-sm">
@@ -53,8 +59,9 @@
                                      text-align: justify;">{{instance.description|default:"Not specified"}}
                     </textarea>
                 </div>
+
                {%endif%}
-               {%if instance.author == user %}
+               {%if instance.author == user or user.is_superuser %}
                <form name="form_delete"
                      style="margin-top: 5px;"
                      method="POST">
