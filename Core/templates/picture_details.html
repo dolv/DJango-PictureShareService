@@ -43,12 +43,6 @@
                     <label >Description:</label>
                     {{form_update.description}}
                 </div>
-               <button class="btn btn-info"
-                           type="submit"
-                           action=""
-                           method="post">
-                       <strong><span class="glyphicon glyphicon-floppy-disk"></span>&nbsp;Update picture details</strong>
-               </button>
                </form>
                {%else%}
                <div class="form-group form-group-sm">
@@ -62,7 +56,8 @@
                {%endif%}
                {%if instance.author == user %}
                <form name="form_delete"
-                     style="margin-top: 5px;">
+                     style="margin-top: 5px;"
+                     method="POST">
                    {% csrf_token %}{{ form_delete.non_field_errors }}
                    <button class="btn btn-danger"
                            type="submit"
