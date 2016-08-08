@@ -87,7 +87,8 @@ class PicturePreviewPageView(UpdateView):
     model = Picture
 
     def get(self, request, key):
-
+        if request.path == "/favicon.ico/":
+            HttpResponseRedirect("/static/favicon.ico")
         instance = Picture.objects.get(key=key)
         instance.viewCounter += 1
         instance.lastViewTime = timezone.now()
@@ -112,8 +113,6 @@ class PopularView(ListView):
     template_name = "popular.html"
 
     def get(self, request):
-        if request.url ==  "/static/favicon.ico/":
-            HttpResponseRedirect("/static/favicon.ico")
         queryset = list(self.model.objects.order_by('-viewCounter')[:self.pictures_to_show])
         ctx = ({'queryset': queryset,
                'td_width': str(100 / self.pictures_in_a_raw - self.pictures_in_a_raw / 16) + '%'
