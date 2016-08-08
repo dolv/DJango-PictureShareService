@@ -105,7 +105,7 @@
                 border: 2px solid #73AD21;
                 display: block;" >
         {% if queryset %}
-        <h2 align="center" style="white-space: normal;">Resently loaded pictures.</h2>
+        <h2 align="center" style="white-space: normal;">Recently loaded pictures.</h2>
         <style>
             .plate-list {
                 white-space: normal;
@@ -159,8 +159,10 @@
 
                 <p align="left" ><strong>Picture ID:</strong> {{item.key}}&emsp;&emsp;<strong>Views: </strong>{{item.viewCounter}}</p>
                 <div class="row" style="margin:0;
-
+                                        line-height:10px;
                                         border-spacing:0;">
+                    <div class="col-md-5"><p align="left"><strong>Author:</strong></p></div>
+                    <div class="col-md-7"><p class="one_line" align="left">{{item.author|default:"not available"}}</p></div>
                     <div class="col-md-5"><p align="left"><strong>Uploaded at:</strong></p></div>
                     <div class="col-md-2"><p class="one_line" align="left">{{item.uploadTime|date:"d/n/Y H:i:s"}}</p></div>
                 </div>

@@ -25,13 +25,32 @@
                       padding: 5px;
                       width:30%;"
                valign="top">
-               <p align="left"><strong>Picture ID:</strong> {{instance.key}}</p>
+               <p align="left"><strong>Picture ID: </strong>{{instance.key}}</p>
+               <p align="left"><strong>Author: </strong>{{instance.author|default:"not available"}}</p>
                <p align="left"><strong>Views count: </strong>{{instance.viewCounter}}</p>
                <p align="left"><strong>Uploaded at: </strong>{{instance.uploadTime|date:"D, d F Y H:i:s "}}</p>
                <p align="left"><strong>Last viewed at: </strong>{{instance.lastViewTime|date:"D, d F Y H:i:s "}}</p>
                <p align="left"><strong>File Size: </strong>{{instance.picture.size|filesizeformat}}</p>
                <p align="left"><strong>Hight: </strong>{{instance.picture.height}} px</p>
                <p align="left"><strong>Width: </strong>{{instance.picture.width}} px</p>
+               {%if user == instance.author %}
+               <form name="form_update" action="" method="post">
+                   {% csrf_token %}
+                   {{ form_update.non_field_errors }}
+                   {{ form_update.action }}
+
+               <div class="form-group form-group-sm">
+                    <label >Description:</label>
+                    {{form_update.description}}
+                </div>
+               <button class="btn btn-info"
+                           type="submit"
+                           action=""
+                           method="post">
+                       <strong><span class="glyphicon glyphicon-floppy-disk"></span>&nbsp;Update picture details</strong>
+               </button>
+               </form>
+               {%else%}
                <div class="form-group form-group-sm">
                     <label >Description:</label>
                     <textarea class="form-control"
@@ -40,6 +59,19 @@
                                      text-align: justify;">{{instance.description|default:"Not specified"}}
                     </textarea>
                 </div>
+               {%endif%}
+               {%if instance.author == user %}
+               <form name="form_delete"
+                     style="margin-top: 5px;">
+                   {% csrf_token %}{{ form_delete.non_field_errors }}
+                   <button class="btn btn-danger"
+                           type="submit"
+                           action=""
+                           method="post">
+                       <strong><span class="glyphicon glyphicon-trash"></span>&nbsp;Delete picture</strong>
+                   </button>
+               </form>
+               {% endif %}
            </td>
        </tr>
     </table>

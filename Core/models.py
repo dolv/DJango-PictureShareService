@@ -30,6 +30,7 @@ class Picture(models.Model):
     uploadTime = models.DateTimeField(default=timezone.now())
     lastViewTime = models.DateTimeField(null=True)
     viewCounter = models.PositiveIntegerField(default=0)
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True)
 
     class Meta:
         ordering = ["-uploadTime"]

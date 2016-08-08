@@ -3,9 +3,12 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
-from django.views.generic import View, FormView, ListView, DetailView
+from django.views.generic import FormView, ListView, UpdateView
+from django.forms import formset_factory
 from .forms import PictureUploadForm, PictureDetailsForm, AuthenticationForm
 from .models import Picture, Likes
+from django import forms
+from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse_lazy, reverse
 from django.contrib import auth, messages
 from django.utils import timezone
@@ -60,13 +63,14 @@ class PictureUploadView(FormView):
     def post(self, request, *args, **kwargs):
         request.POST.__setitem__('key', self.gen_random_key())
         request.POST.__setitem__('uploadTime', timezone.now())
+        request.POST.__setitem__('author', request.user.id)
         form = self.form_class(request.POST, request.FILES)
 
         # str(hashlib.md5(request.FILES['picture'].file.read()).hexdigest())
         ctx = {'form': form}
         if form.is_valid():
             form.save(commit=True)
-            return HttpResponseRedirect(reverse(self.success_url))
+            return HttpResponseRedirect(form.key)
         self.add_queryset_to_ctx(ctx)
         return render(request, self.template_name, ctx)
 
@@ -77,20 +81,28 @@ class PictureUploadView(FormView):
         return super(PictureUploadView, self).form_valid(form)
 
 
-class PicturePreviewPageView(LoginRequiredMixin, DetailView):
+class PicturePreviewPageView(UpdateView):
     form_class = PictureDetailsForm
     template_name = "picture_details.html"
     model = Picture
 
     def get(self, request, key):
-        form = self.form_class(request.GET)
+
         instance = Picture.objects.get(key=key)
         instance.viewCounter += 1
         instance.lastViewTime = timezone.now()
         instance.save()
-        ctx = {'form': form,
+        form_update = self.form_class(request.GET)
+        form_delete = self.form_class(request.GET)
+        form_update.description = instance.description
+        ctx = {'form_update': form_update,
+               'form_delete': form_delete,
                'instance': instance}
         return render(request, self.template_name, ctx)
+
+    def post(self, request, key):
+        pass
+
 
 
 class PopularView(ListView):

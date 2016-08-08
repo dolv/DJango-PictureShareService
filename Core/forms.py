@@ -1,7 +1,7 @@
 from django import forms
 from .models import Picture, Likes
 from django.contrib.auth.models import User
-
+from django.forms.formsets import formset_factory
 
 class PictureUploadForm(forms.ModelForm):
     """Upload files with this form"""
@@ -14,11 +14,16 @@ class PictureUploadForm(forms.ModelForm):
 
     class Meta:
         model = Picture
-        fields = ('picture','description','key', 'uploadTime')
+        fields = ('picture','description','key', 'uploadTime','author')
 
 
 class PictureDetailsForm(forms.ModelForm):
     """Show picture details with this form"""
+    description = forms.Textarea(attrs={'class': 'form-control',
+                                        'align': 'left',
+                                        'style': 'white-space: normal; '
+                                                 'text-align: justify;'},
+                                 )
 
     class Meta:
         model = Picture
