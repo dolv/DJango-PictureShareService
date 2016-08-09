@@ -6,8 +6,8 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
 from django.views.generic import FormView, ListView, UpdateView, DeleteView, View
 from django.forms import formset_factory
-from .forms import PictureUploadForm, PictureDetailsForm, AuthenticationForm, LikesForm
-from .models import Picture, Likes
+from Core import forms as core_forms
+from Core import models as core_models
 from django import forms
 from django.contrib.auth.models import User
 from django.core.urlresolvers import reverse_lazy, reverse
@@ -30,8 +30,8 @@ import hashlib
 
 
 class PictureUploadView(FormView):
-    form_class = PictureUploadForm
-    model = Picture
+    form_class = core_forms.PictureUploadForm
+    model = core_models.Picture
     pictures_in_a_raw = 4
     pictures_to_show = 12
     success_url = 'home-page'
@@ -83,9 +83,9 @@ class PictureUploadView(FormView):
 
 
 class PicturePreviewPageView(LoginRequiredMixin, DeleteView):
-    form_class = PictureDetailsForm
+    form_class = core_forms.PictureDetailsForm
     template_name = "picture_details.html"
-    model = Picture
+    model = core_models.Picture
     success_url = 'home-page'
 
     def get(self, request, key):
@@ -124,8 +124,8 @@ class PicturePreviewPageView(LoginRequiredMixin, DeleteView):
 
 
 class PictureUpdateView(LoginRequiredMixin, UpdateView):
-    form_class = PictureDetailsForm
-    model = Picture
+    form_class = core_forms.PictureDetailsForm
+    model = core_models.Picture
     success_url = 'picture-details'
 
     @method_decorator(login_required)
@@ -137,7 +137,7 @@ class PictureUpdateView(LoginRequiredMixin, UpdateView):
 
 
 class PopularView(ListView):
-    model = Picture
+    model = core_models.PictureWithLikesCount
     pictures_in_a_raw = 4
     pictures_to_show = 12
     template_name = "popular.html"
@@ -157,7 +157,7 @@ class PopularView(ListView):
 
 
 class LoginView(FormView):
-    form_class = AuthenticationForm
+    form_class = core_forms.AuthenticationForm
     template_name = 'user_auth/login.html'
 
     def post(self, request, *args, **kwargs):
@@ -179,7 +179,7 @@ def logoutView(request):
         return HttpResponseRedirect('/')
 
 class LikesView(View):
-    form_class = LikesForm
+    form_class = core_forms.LikesForm
     model = Likes
     success_url = 'picture-details'
 

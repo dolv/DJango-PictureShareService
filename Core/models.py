@@ -46,3 +46,9 @@ class Likes(models.Model):
     user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True)
     created = models.DateTimeField(auto_now_add=True)
     like = models.BooleanField()
+
+class PictureWithLikesCount(models.Model):
+
+    class Meta:
+        db_table = 'PictureWithLikesCount'
+        managed = False
