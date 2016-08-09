@@ -4,9 +4,9 @@ from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponseBadRequest
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
-from django.views.generic import FormView, ListView, UpdateView, DeleteView
+from django.views.generic import FormView, ListView, UpdateView, DeleteView, View
 from django.forms import formset_factory
-from .forms import PictureUploadForm, PictureDetailsForm, AuthenticationForm
+from .forms import PictureUploadForm, PictureDetailsForm, AuthenticationForm, LikesForm
 from .models import Picture, Likes
 from django import forms
 from django.contrib.auth.models import User
@@ -95,14 +95,26 @@ class PicturePreviewPageView(LoginRequiredMixin, DeleteView):
         instance.viewCounter += 1
         instance.lastViewTime = timezone.now()
         instance.save()
+        number_of_likes = Likes.objects.filter(picture=instance.id, like=True).count()
+        number_of_dislikes = Likes.objects.filter(picture=instance.id, like=False).count()
+        user_like_choice = Likes.objects.get(picture=instance.id, user=request.user)
+        if user_like_choice is not None:
+            user_like_choice = user_like_choice.like
         form_update = self.form_class()
         form_update.fields['key'].initial = instance.key
         form_update.fields['description'].initial = instance.description
         form_delete = self.form_class()
-
+        like_form = LikesForm(initial={'like': True})
+        dislike_form = LikesForm(initial={'like': False})
         ctx = {'form_update': form_update,
                'form_delete': form_delete,
-               'instance': instance}
+               'instance': instance,
+               'like_form': like_form,
+               'dislike_form': dislike_form,
+               'user_like_choice': user_like_choice,
+               'likes_number': {'positive': number_of_likes,
+                                'negative': number_of_dislikes,
+                                'total': number_of_likes+number_of_dislikes}}
         return render(request, self.template_name, ctx)
 
     def post(self, request, key):
@@ -116,6 +128,7 @@ class PictureUpdateView(LoginRequiredMixin, UpdateView):
     model = Picture
     success_url = 'picture-details'
 
+    @method_decorator(login_required)
     def post(self, request):
         instance = get_object_or_404(self.model, key=request.POST.get('key'))
         form = self.form_class(request.POST, instance=instance)
@@ -130,10 +143,16 @@ class PopularView(ListView):
     template_name = "popular.html"
 
     def get(self, request):
-        queryset = list(self.model.objects.order_by('-viewCounter')[:self.pictures_to_show])
+        if 'popular' in request.path:
+            queryset = list(self.model.objects.order_by('-viewCounter')[:self.pictures_to_show])
+            caption = 'The most popular pictures.'
+        if 'most-liked' in request.path:
+            queryset = list(self.model.objects.order_by('-viewCounter')[:self.pictures_to_show])
+            caption = 'The most liked pictures.'
         ctx = ({'queryset': queryset,
-               'td_width': str(100 / self.pictures_in_a_raw - self.pictures_in_a_raw / 16) + '%'
-              })
+               'td_width': str(100 / self.pictures_in_a_raw - self.pictures_in_a_raw / 16) + '%',
+               'caption': caption
+               })
         return render(request, self.template_name, ctx)
 
 
@@ -158,3 +177,30 @@ def logoutView(request):
     if request.user.is_authenticated():
         logout(request)
         return HttpResponseRedirect('/')
+
+class LikesView(View):
+    form_class = LikesForm
+    model = Likes
+    success_url = 'picture-details'
+
+    @method_decorator(login_required)
+    def post(self, request, key):
+        def str_bool(str_var):
+            return {'True': True, 'False': False}[str_var]
+
+        picture = get_object_or_404(Picture, key=key)
+        try:
+            like = self.model.objects.get(
+                                          picture=picture,
+                                          user=request.user
+                                         )
+            like.like = str_bool(request.POST.get('like'))
+            like.created = timezone.now()
+            form = self.form_class(request.POST, instance=like)
+            if form.is_valid():
+                form.save()
+        except self.model.DoesNotExist:
+            like, created = self.model.objects.get_or_create(picture=picture,
+                                                             user=request.user,
+                                                             like=str_bool(request.POST.get('like')))
+        return HttpResponseRedirect(reverse(self.success_url, args=[key]))

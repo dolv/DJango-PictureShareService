@@ -34,8 +34,10 @@ urlpatterns = [
     url(r'^user/logout/$', core_views.logoutView, name="logout"),
     url(r'^admin/', admin.site.urls),
     url(r'^popular/$', core_views.PopularView.as_view(), name='popular'),
+    url(r'^most-liked/$', core_views.PopularView.as_view(), name='popular'),
     url(r'^update/$', core_views.PictureUpdateView.as_view(), name='picture-update'),
     url(r'^$', core_views.PictureUploadView.as_view(), name='home-page'),
-    url(r'^([\w\d-]+)$', core_views.PicturePreviewPageView.as_view(), name='picture-details'),
+    url(r'^([\w\d-]+)/$', core_views.PicturePreviewPageView.as_view(), name='picture-details'),
+    url(r'^([\w\d-]+)/like/$', core_views.LikesView.as_view(), name='picture-like'),
     ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

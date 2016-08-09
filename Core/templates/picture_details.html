@@ -28,6 +28,34 @@
                <p align="left"><strong>Picture ID: </strong>{{instance.key}}</p>
                <p align="left"><strong>Author: </strong>{{instance.author|default:"not available"}}</p>
                <p align="left"><strong>Views count: </strong>{{instance.viewCounter}}</p>
+               <p align="left"><strong>Likes count: </strong>{{likes_number.total}} &nbsp;</p>
+               <div class="col-md-6">
+                   <form name="form_likes" action="/{{instance.key}}/like/" method="post">
+                   {% csrf_token %}
+                   {{like_form.like}}
+                   <button class="btn btn-default" type="submit">
+                       <span class="glyphicon glyphicon-thumbs-up"></span>
+                   </button>&nbsp;{{likes_number.positive}}
+                   </form>
+               </div>
+               <div class="col-md-6">
+                   <form name="form_likes" action="/{{instance.key}}/like/" method="post">
+                   {% csrf_token %}
+                   {{dislike_form.like}}
+                   <button class="btn btn-default" type="submit">
+                        <span class="glyphicon glyphicon-thumbs-down"></span>
+                   </button>&nbsp;{{likes_number.negative}}
+                   </form>
+               </div>
+
+               {% if user_like_choice == True %}
+               <p align="left"><strong>Your vote is: </strong><span class="glyphicon glyphicon-thumbs-up"></span></p>
+               {% elif user_like_choice == False %}
+               <p align="left"><strong>Your vote is: </strong><span class="glyphicon glyphicon-thumbs-down"></span></p>
+               {% else%}
+               <p align="left"><strong>You haven't voted yet for this picture.</strong></p>
+               {% endif %}
+
                <p align="left"><strong>Uploaded at: </strong>{{instance.uploadTime|date:"D, d F Y H:i:s "}}</p>
                <p align="left"><strong>Last viewed at: </strong>{{instance.lastViewTime|date:"D, d F Y H:i:s "}}</p>
                <p align="left"><strong>File Size: </strong>{{instance.picture.size|filesizeformat}}</p>

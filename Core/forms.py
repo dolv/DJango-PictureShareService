@@ -39,3 +39,13 @@ class AuthenticationForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ('username', 'password')
+
+class LikesForm(forms.ModelForm):
+    like = forms.BooleanField(widget=forms.HiddenInput(),
+                              required=False)
+    picture = forms.IntegerField(required=False)
+    user = forms.IntegerField(required=False)
+
+    class Meta:
+        model = Likes
+        fields = ('picture', 'user', 'like')
