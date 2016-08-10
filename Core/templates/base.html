@@ -30,10 +30,13 @@
               <a href="/"><span class="glyphicon glyphicon-home" aria-hidden="false"></span> Home </a>
             </li>
             <li>
-              <a href="/popular/"> Most popular</a>
+              <a href="/popular/"><span class="glyphicon glyphicon-star"></span> Most popular</a>
             </li>
             <li>
-              <a href="/most-liked/"> Most liked</a>
+              <a href="/most-liked/"><span class="glyphicon glyphicon-heart"></span> Most liked</a>
+            </li>
+            <li>
+              <a href="/admin/"><span class="glyphicon glyphicon-cog"></span> Django administration</a>
             </li>
           </ul>
 
@@ -52,7 +55,7 @@
                 <span class="caret"></span>
               </a>
               <ul class="dropdown-menu" aria-labelledby="drop3">
-                <li><a href="#"><span class="glyphicon glyphicon-briefcase">&nbsp;Profile</span></a></li>
+                <li><a href="/admin/auth/user/{{user.id}}/change/"><span class="glyphicon glyphicon-briefcase">&nbsp;Profile</span></a></li>
                 <li role="separator" class="divider"></li>
                 <li><a href="/user/logout/"><span class="glyphicon glyphicon-off">&nbsp;Logout</span></a></li>
               </ul>

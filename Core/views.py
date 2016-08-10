@@ -95,17 +95,20 @@ class PicturePreviewPageView(LoginRequiredMixin, DeleteView):
         instance.viewCounter += 1
         instance.lastViewTime = timezone.now()
         instance.save()
-        number_of_likes = Likes.objects.filter(picture=instance.id, like=True).count()
-        number_of_dislikes = Likes.objects.filter(picture=instance.id, like=False).count()
-        user_like_choice = Likes.objects.get(picture=instance.id, user=request.user)
+        number_of_likes = core_models.Likes.objects.filter(picture=instance.id, like=1).count()
+        number_of_dislikes = core_models.Likes.objects.filter(picture=instance.id, like=0).count()
+        try:
+            user_like_choice = core_models.Likes.objects.get(picture=instance.id, user=request.user)
+        except core_models.Likes.DoesNotExist:
+            user_like_choice = None
         if user_like_choice is not None:
             user_like_choice = user_like_choice.like
         form_update = self.form_class()
         form_update.fields['key'].initial = instance.key
         form_update.fields['description'].initial = instance.description
         form_delete = self.form_class()
-        like_form = LikesForm(initial={'like': True})
-        dislike_form = LikesForm(initial={'like': False})
+        like_form = core_forms.LikesForm(initial={'like': True})
+        dislike_form = core_forms.LikesForm(initial={'like': False})
         ctx = {'form_update': form_update,
                'form_delete': form_delete,
                'instance': instance,
@@ -118,7 +121,7 @@ class PicturePreviewPageView(LoginRequiredMixin, DeleteView):
         return render(request, self.template_name, ctx)
 
     def post(self, request, key):
-        instance = get_object_or_404(Picture, key=key)
+        instance = get_object_or_404(core_models.Picture, key=key)
         instance.delete()
         return HttpResponseRedirect(reverse(self.success_url))
 
@@ -147,7 +150,7 @@ class PopularView(ListView):
             queryset = list(self.model.objects.order_by('-viewCounter')[:self.pictures_to_show])
             caption = 'The most popular pictures.'
         if 'most-liked' in request.path:
-            queryset = list(self.model.objects.order_by('-viewCounter')[:self.pictures_to_show])
+            queryset = list(self.model.objects.order_by('-likes_number')[:self.pictures_to_show])
             caption = 'The most liked pictures.'
         ctx = ({'queryset': queryset,
                'td_width': str(100 / self.pictures_in_a_raw - self.pictures_in_a_raw / 16) + '%',
@@ -180,7 +183,7 @@ def logoutView(request):
 
 class LikesView(View):
     form_class = core_forms.LikesForm
-    model = Likes
+    model = core_models.Likes
     success_url = 'picture-details'
 
     @method_decorator(login_required)
@@ -188,7 +191,7 @@ class LikesView(View):
         def str_bool(str_var):
             return {'True': True, 'False': False}[str_var]
 
-        picture = get_object_or_404(Picture, key=key)
+        picture = get_object_or_404(core_models.Picture, key=key)
         try:
             like = self.model.objects.get(
                                           picture=picture,

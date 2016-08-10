@@ -33,7 +33,7 @@
                 display: inline-block;
                 width: {{td_width}};
                 box-sizing: border-box;
-                padding: 0 10px;
+                padding: 10px 10px;
                 vertical-align: top;
                 border: 1px solid;
                 border-radius: 10px;
@@ -67,7 +67,14 @@
 
                 <p align="left" ><strong>Picture ID:</strong> {{item.key}}&emsp;&emsp;<strong>Views: </strong>{{item.viewCounter}}</p>
                 <div class="row" style="margin:0;
-
+                                        border-spacing:0;">
+                    <div class="col-md-5"><p align="left"><strong>Total votes: </strong>{{item.likes_number}}</p></div>
+                    <div class="col-md-2"><p class="one_line" align="left">
+                        <strong><span class="glyphicon glyphicon-thumbs-up"></span>: </strong> {{item.like_count}} &emsp;
+                        <strong><span class="glyphicon glyphicon-thumbs-down"></span>: </strong> {{item.dislike_count}}</p>
+                    </div>
+                </div>
+                <div class="row" style="margin:0;
                                         border-spacing:0;">
                     <div class="col-md-5"><p align="left"><strong>Uploaded at:</strong></p></div>
                     <div class="col-md-2"><p class="one_line" align="left">{{item.uploadTime|date:"d/n/Y H:i:s"}}</p></div>

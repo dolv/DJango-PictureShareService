@@ -27,7 +27,7 @@ class Picture(models.Model):
     key = models.SlugField(max_length=4,
                            unique=True,
                            null=False)
-    uploadTime = models.DateTimeField(default=timezone.now())
+    uploadTime = models.DateTimeField(default=timezone.now)
     lastViewTime = models.DateTimeField(null=True)
     viewCounter = models.PositiveIntegerField(default=0)
     author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True)
@@ -48,7 +48,20 @@ class Likes(models.Model):
     like = models.BooleanField()
 
 class PictureWithLikesCount(models.Model):
+    picture = models.ImageField(upload_to='media_dir/%Y/%m/%d/%S')
+    description = models.CharField(max_length=50, blank=True)
+    key = models.SlugField(max_length=4,
+                           unique=True,
+                           null=False)
+    uploadTime = models.DateTimeField(default=timezone.now)
+    lastViewTime = models.DateTimeField(null=True)
+    viewCounter = models.PositiveIntegerField(default=0)
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True)
+    like_count = models.IntegerField()
+    dislike_count = models.IntegerField()
+    likes_number = models.IntegerField()
 
     class Meta:
         db_table = 'PictureWithLikesCount'
         managed = False
+
