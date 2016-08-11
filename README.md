@@ -9,35 +9,45 @@ sudo apt-get install git sqlite3 python3-venv python3-dev libpng-dev zlib1g-dev 
 ```
 
 2. get the repository to the local folder (create if needed and cd to that directory)
+
 ```git clone https://github.com/dolv/DJango-PictureShareService.git```
 
 3. go inside the newly created folder
+
 ```cd DJango-PictureShareService```
 
 4. Create virtual environment instance
+
 ```python3 -m venv PictureShareServiceVENV```
 
 5. Give execution rights to the activate script
+
 ```chmod +x PictureShareServiceVENV/bin/activate```
 
 6. Activate working virtual environment (pay attention to the leading (.) dot)
+
 ```. PictureShareServiceVENV/bin/activate```
 
 7. install project requirements as follows
+
 ```pip install -r requirements.txt```
 
 8. check what packages where installed and compare it to the requirements.txt file
+
 ```pip freeze```
 (the output should coincide with the requirements.txt content)
 
 9. Prepare/create database tables running the following command:
+
 ```python manage.py migrate```
 
 10. check if database has been appropriately initialed.
+
 ```
 python manage.py dbshell
 
 sqlite> .tables
+
 ```
 you should see the console output similar to the following one:
 ```
@@ -55,9 +65,11 @@ auth_user
 ```sqlite> .quit```
 
 11. create superused for the database
+
 ```python manage.py createsuperuser```
 
 12. Run the development server with the command:
+
 ```python manage.py runserver &```
 The output will look like this:
 ```
