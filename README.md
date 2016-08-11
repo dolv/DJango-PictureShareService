@@ -35,6 +35,7 @@ sudo apt-get install git sqlite3 python3-venv python3-dev libpng-dev zlib1g-dev 
 8. check what packages where installed and compare it to the requirements.txt file
 
 ```pip freeze```
+
 (the output should coincide with the requirements.txt content)
 
 9. Prepare/create database tables running the following command:
@@ -71,7 +72,9 @@ auth_user
 12. Run the development server with the command:
 
 ```python manage.py runserver &```
+
 The output will look like this:
+
 ```
 Performing system checks...
 
@@ -81,6 +84,7 @@ Django version 1.9.8, using settings 'PictureShareService.settings'
 Starting development server at http://127.0.0.1:8000/
 Quit the server with CONTROL-C.
 ```
+
 13. try connecting to http://127.0.0.1:8000/ in web-browser.
 
 Have fun...
