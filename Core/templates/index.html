@@ -20,6 +20,10 @@
   padding: 5px 10px;
   text-align: center;
   text-decoration: none;
+  -webkit-animation: glowing 1500ms infinite;
+  -moz-animation: glowing 1500ms infinite;
+  -o-animation: glowing 1500ms infinite;
+  animation: glowing 1500ms infinite;
 }
 @-webkit-keyframes glowing {
   0% { background-color: #B20000; -webkit-box-shadow: 0 0 3px #B20000; }
@@ -45,60 +49,98 @@
   100% { background-color: #B20000; box-shadow: 0 0 3px #B20000; }
 }
 
-.blinking {
-  -webkit-animation: glowing 1500ms infinite;
-  -moz-animation: glowing 1500ms infinite;
-  -o-animation: glowing 1500ms infinite;
-  animation: glowing 1500ms infinite;
+.plate-list {
+  white-space: normal;
+  text-align: left;
+  -webkit-padding-start: 0;
 }
 
+.plate-list:after {
+  content:'';
+  display: block;
+  clear: both;
+}
+
+.plate__item {
+    display: inline-block;
+    width: {{td_width}};
+    height: {{td_height}};
+    box-sizing: border-box;
+    padding: 10px 10px;
+    margin-top: 5px;
+    vertical-align: top;
+    border: 1px solid;
+    border-radius: 10px;
+}
+
+.plate__item:first-child {
+    margin-left: 0;
+}
+
+.one_line {
+    white-space: nowrap;
+}
+
+@media only screen and (max-width: 1499px) {
+    .plate__item {
+        width: 32%;
+    }
+@media only screen and (max-width: 1149px) {
+    .plate__item {
+        width: 48%;
+    }
+@media only screen and (max-width: 549px) {
+    .plate__item {
+        width: 100%;
+    }
+}
 </style>
 <div class="col-md-12 container" role="main">
 
     <form class="form-horizontal" action="" method="post" enctype="multipart/form-data"
           style="border-radius: 25px; padding: 20px 20px 0; border: 2px solid #73AD21; margin: 0 0 25px 0px;">
-      {% if user.is_anonymous %}
+        {% if user.is_anonymous %}
         <div style="text-align: center;">
             <p class="blinking">Please note: in order to be able to submit pictures you need to be authenticated.</p>
         </div>
-      {% endif %}
-      {% csrf_token %}
-      {{ form.non_field_errors }}
-      <div class="form-group btn-default">
-          <label class="col-md-2 control-label" for="{{ form.picture.id_for_label }}">Picture file for upload:</label>
+        {% endif %}
+        {% csrf_token %}
+        {{ form.non_field_errors }}
+        <div class="form-group btn-default">
+            <label class="col-md-2 control-label" for="{{ form.picture.id_for_label }}">Picture file for upload:</label>
 
-          <div class="col-md-3"
-               container="body"
-               id="popoverExample"
-               data-toggle="popover"
-               data-trigger="focus"
-               data-placement="right"
-               data-content="{{form.picture.errors.as_text}}"
-               template='<div class="popover" role="tooltip">
+            <div class="col-md-3"
+                 container="body"
+                 id="popoverExample"
+                 data-toggle="popover"
+                 data-trigger="focus"
+                 data-placement="right"
+                 data-content="{{form.picture.errors.as_text}}"
+                 template='<div class="popover" role="tooltip">
                             <div class="arrow"></div>
                             <h3 class="popover-title"></h3>
                             <div class="popover-content" style="background-color: #5bc0de; border-color: #46b8da;"></div>
                          </div>'
-          >
-              {{ form.picture }}
-          </div>
-      </div>
-      <div class="form-group form-group-sm btn-default" >
+            >
+                {{ form.picture }}
+            </div>
+        </div>
+        <div class="form-group form-group-sm btn-default" >
             {{form.description.errors}}
             <label class="col-md-2 control-label" style="padding-top: 8px;" for="{{ form.description.id_for_label }}">Picture description:</label>
             <div class="col-md-10" style="padding-top: 5px;">
-            {{ form.description }}
+                {{ form.description }}
             </div>
-      </div>
-      <div class="form-group">
-              <div class="col-md-10 col-md-offset-1" style="padding-top: 5px;">
+        </div>
+        <div class="form-group">
+            <div class="col-md-10 col-md-offset-1" style="padding-top: 5px;">
                 <button type="submit" class="btn btn-info col-md-12 col-xs-12" >Submit</button>
-              </div>
-      </div>
+            </div>
+        </div>
 
     </form>
 
- <div class="btn"
+    <div class="btn"
          style="border-radius: 25px;
                 margin-bottom: 20px;
                 padding: 0 20px 20px 20px;
@@ -107,54 +149,10 @@
         {% if queryset %}
         <h2 align="center" style="white-space: normal;">Recently loaded pictures.</h2>
         <style>
-            .plate-list {
-                white-space: normal;
-                text-align: left;
-                -webkit-padding-start: 0;
-            }
 
-            .plate-list:after {
-            content:'';
-            display: block;
-            clear: both;
-            }
-
-            .plate__item {
-                display: inline-block;
-                width: {{td_width}};
-                height: {{td_height}};
-                box-sizing: border-box;
-                padding: 10px 10px;
-                margin-top: 5px;
-                vertical-align: top;
-                border: 1px solid;
-                border-radius: 10px;
-            }
-
-            .plate__item:first-child {
-                margin-left: 0;
-            }
-
-            .one_line {
-                white-space: nowrap;
-            }
-
-            @media only screen and (max-width: 1499px) {
-                .plate__item {
-                    width: 32%;
-                }
-            @media only screen and (max-width: 1149px) {
-                .plate__item {
-                    width: 48%;
-                }
-            @media only screen and (max-width: 549px) {
-                .plate__item {
-                    width: 100%;
-                }
-            }
         </style>
         <ul class="plate-list">
-        {% for item in queryset %}
+            {% for item in queryset %}
             <li class="plate__item">
 
                 <p align="left" ><strong>Picture ID:</strong> {{item.key}}&emsp;&emsp;<strong>Views: </strong>{{item.viewCounter}}</p>
@@ -190,7 +188,7 @@
                 </div>
 
             </li>
-        {% endfor %}
+            {% endfor %}
         </ul>
         {% else %}
         <h2 align="center" style="white-space: normal;">No pictures found. Please proceeds and add some stuff.</h2>

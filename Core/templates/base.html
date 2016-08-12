@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html>
-  <head>
+<head>
     <meta charset="utf-8">
     <meta name="author" content="DUDCHENKO Oleksandr">
     <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -14,64 +14,109 @@
     {% else %}
     <title>PictureShareService</title>
     {% endif %}
-    
-    {% block head %}{% endblock %}
-  </head>
-  <body>
-    {% block header %}
-      <nav class="navbar navbar-default navbar-static" id="navbar-example">
-        <div class="container-fluid">
-          <div class="navbar-header">
-            <a href="/" class="navbar-brand" aria-label="Left Align">PictureShareService</a>
-          </div>
-          <div class="collapse navbar-collapse ">
-          <ul class="nav navbar-nav">
-            <li>
-              <a href="/"><span class="glyphicon glyphicon-home" aria-hidden="false"></span> Home </a>
-            </li>
-            <li>
-              <a href="/popular/"><span class="glyphicon glyphicon-star"></span> Most popular</a>
-            </li>
-            <li>
-              <a href="/most-liked/"><span class="glyphicon glyphicon-heart"></span> Most liked</a>
-            </li>
-            <li>
-              <a href="/admin/"><span class="glyphicon glyphicon-cog"></span> Django administration</a>
-            </li>
-          </ul>
 
-          <ul class="nav navbar-nav navbar-right">
-            {% if user %}
-              {% if user.is_authenticated %}
-            <li class="dropdown">
-              <a href="#"
-                 class="dropdown-toggle navbar-brand"
-                 data-toggle="dropdown"
-                 role="button"
-                 aria-haspopup="true"
-                 aria-expanded="false">
-                <span class="glyphicon glyphicon-user"></span>
-                {{ user }}
-                <span class="caret"></span>
-              </a>
-              <ul class="dropdown-menu" aria-labelledby="drop3">
-                <li><a href="/admin/auth/user/{{user.id}}/change/"><span class="glyphicon glyphicon-briefcase">&nbsp;Profile</span></a></li>
-                <li role="separator" class="divider"></li>
-                <li><a href="/user/logout/"><span class="glyphicon glyphicon-off">&nbsp;Logout</span></a></li>
-              </ul>
-            </li>
-              {% else %}
-            <li>
-              <a class="navbar-brand" href="/user/login/">Sign in</a>
-            </li>
-              {% endif %}
-            {% endif %}
-          </ul>
-          </div>
+    {% block head %}{% endblock %}
+    <style>
+    #myModal{
+      z-index: 100500;
+    }
+  </style>
+</head>
+<body>
+{% block header %}
+<nav class="navbar navbar-default navbar-static" id="navbar-example">
+    <div class="container-fluid">
+        <div class="navbar-header">
+            <a href="/" class="navbar-brand" aria-label="Left Align">PictureShareService</a>
         </div>
-      </nav>
-    {% endblock %}
-    {% block body %}{% endblock %}
-    {% block footer %}{% endblock %}
-  </body>
+        <div class="collapse navbar-collapse ">
+            <ul class="nav navbar-nav">
+                <li>
+                    <a href="/"><span class="glyphicon glyphicon-home" aria-hidden="false"></span> Home </a>
+                </li>
+                <li>
+                    <a href="/popular/"><span class="glyphicon glyphicon-star"></span> Most popular</a>
+                </li>
+                <li>
+                    <a href="/most-liked/"><span class="glyphicon glyphicon-heart"></span> Most liked</a>
+                </li>
+                <li>
+                    <a href="/admin/"><span class="glyphicon glyphicon-cog"></span> Django administration</a>
+                </li>
+            </ul>
+
+            {% if user and user.is_authenticated %}
+            <ul class="nav navbar-nav navbar-right" >
+            {% else %}
+            <ul class="nav navbar-nav navbar-right" style="margin-top: 0.7%">
+            {% endif %}
+
+                {% if user %}
+                {% if user.is_authenticated %}
+                <li class="dropdown">
+                    <a href="#"
+                       class="dropdown-toggle navbar-brand"
+                       data-toggle="dropdown"
+                       role="button"
+                       aria-haspopup="true"
+                       aria-expanded="false">
+                        <span class="glyphicon glyphicon-user"></span>
+                        {{ user }}
+                        <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu" aria-labelledby="drop3">
+                        <li><a href="/admin/auth/user/{{user.id}}/change/"><span class="glyphicon glyphicon-briefcase">&nbsp;Profile</span></a></li>
+                        <li role="separator" class="divider"></li>
+                        <li><a href="/user/logout/"><span class="glyphicon glyphicon-off">&nbsp;Logout</span></a></li>
+                    </ul>
+                </li>
+                {% else %}
+                <li >
+                    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#myModal" >
+                        <span class="glyphicon glyphicon-off" style="padding-right:5px;"></span>Sign in
+                    </button>
+                </li>
+                {% endif %}
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>
+{% endblock %}
+{% block body %}{% endblock %}
+{% block footer %}{% endblock %}
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                <h4 class="modal-title" id="myModalLabel"><span class="glyphicon glyphicon-off"></span>Sign in</h4>
+            </div>
+            {% if request %}
+            <form action="/user/login/?next={{request.get_full_path}}" method="post" >
+                {%else%}
+                <form action="/" method="post" >
+                    {% endif %}
+                    <div class="modal-body">
+                        {% csrf_token %}
+                        {{ login_form.errors }}
+                        <div class="form-group btn-default">
+                            <label class="col-md-2 control-label" for="username">Login:</label>
+                            {{login_form.username}}
+                        </div>
+                        <div class="form-group btn-default">
+                            <label class="col-md-2 control-label" for="password">Password:</label>
+                            {{login_form.password}}
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <button type="submit" class="btn btn-primary">Login</button>
+                    </div>
+                </form>
+        </div>
+    </div>
+</div>
+</body>
 </html>

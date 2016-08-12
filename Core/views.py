@@ -28,14 +28,21 @@ import hashlib
 # /<key>
 #    страница отдельной картинки
 
+class BaseHeaderMenu(FormView):
+    form_class = core_forms.AuthenticationForm()
+    ctx = {'login_form': form_class,
+           'login_next': ''}
 
-class PictureUploadView(FormView):
+
+class PictureUploadView(BaseHeaderMenu, FormView):
+    parent_class = BaseHeaderMenu
     form_class = core_forms.PictureUploadForm
     model = core_models.Picture
     pictures_in_a_raw = 4
     pictures_to_show = 12
     success_url = 'home-page'
     template_name = "index.html"
+    ctx = parent_class.ctx
 
     def add_queryset_to_ctx(self, ctx):
         queryset = list(self.model.objects.order_by('-uploadTime')[:self.pictures_to_show])
@@ -56,9 +63,9 @@ class PictureUploadView(FormView):
 
     def get(self, request):
         form = self.form_class(request.GET)
-        ctx = {'form': form}
-        self.add_queryset_to_ctx(ctx)
-        return render(request, self.template_name, ctx)
+        self.ctx.update({'form': form})
+        self.ctx.update({'request': request})
+        return render(request, self.template_name, self.ctx)
 
     @method_decorator(login_required)
     def post(self, request, *args, **kwargs):
@@ -68,12 +75,12 @@ class PictureUploadView(FormView):
         form = self.form_class(request.POST, request.FILES)
 
         # str(hashlib.md5(request.FILES['picture'].file.read()).hexdigest())
-        ctx = {'form': form}
+        self.ctx.update({'form': form})
         if form.is_valid():
             form.save(commit=True)
             return HttpResponseRedirect(self.request.POST.get('key'))
-        self.add_queryset_to_ctx(ctx)
-        return render(request, self.template_name, ctx)
+        self.add_queryset_to_ctx(self.ctx)
+        return render(request, self.template_name, self.ctx)
 
 
     def form_valid(self, form):
@@ -82,11 +89,13 @@ class PictureUploadView(FormView):
         return super(PictureUploadView, self).form_valid(form)
 
 
-class PicturePreviewPageView(LoginRequiredMixin, DeleteView):
+class PicturePreviewPageView(LoginRequiredMixin, BaseHeaderMenu, DeleteView):
     form_class = core_forms.PictureDetailsForm
+    parent_class = BaseHeaderMenu
     template_name = "picture_details.html"
     model = core_models.Picture
     success_url = 'home-page'
+    ctx = parent_class.ctx
 
     def get(self, request, key):
         if request.path == "/favicon.ico/":
@@ -109,16 +118,18 @@ class PicturePreviewPageView(LoginRequiredMixin, DeleteView):
         form_delete = self.form_class()
         like_form = core_forms.LikesForm(initial={'like': True})
         dislike_form = core_forms.LikesForm(initial={'like': False})
-        ctx = {'form_update': form_update,
-               'form_delete': form_delete,
-               'instance': instance,
-               'like_form': like_form,
-               'dislike_form': dislike_form,
-               'user_like_choice': user_like_choice,
-               'likes_number': {'positive': number_of_likes,
-                                'negative': number_of_dislikes,
-                                'total': number_of_likes+number_of_dislikes}}
-        return render(request, self.template_name, ctx)
+        self.ctx.update({'form_update': form_update,
+                         'form_delete': form_delete,
+                         'instance': instance,
+                         'like_form': like_form,
+                         'dislike_form': dislike_form,
+                         'user_like_choice': user_like_choice,
+                         'likes_number': {'positive': number_of_likes,
+                                          'negative': number_of_dislikes,
+                                          'total': number_of_likes+number_of_dislikes}})
+        self.ctx.update({'request': request})
+
+        return render(request, self.template_name, self.ctx)
 
     def post(self, request, key):
         instance = get_object_or_404(core_models.Picture, key=key)
@@ -139,11 +150,13 @@ class PictureUpdateView(LoginRequiredMixin, UpdateView):
         return HttpResponseRedirect(reverse(self.success_url, args=[instance.key]))
 
 
-class PopularView(ListView):
+class PopularView(BaseHeaderMenu, ListView):
+    parent_class = BaseHeaderMenu
     model = core_models.PictureWithLikesCount
     pictures_in_a_raw = 4
     pictures_to_show = 12
     template_name = "popular.html"
+    ctx = parent_class.ctx
 
     def get(self, request):
         if 'popular' in request.path:
@@ -152,11 +165,12 @@ class PopularView(ListView):
         if 'most-liked' in request.path:
             queryset = list(self.model.objects.order_by('-likes_number')[:self.pictures_to_show])
             caption = 'The most liked pictures.'
-        ctx = ({'queryset': queryset,
-               'td_width': str(100 / self.pictures_in_a_raw - self.pictures_in_a_raw / 16) + '%',
-               'caption': caption
-               })
-        return render(request, self.template_name, ctx)
+        self.ctx.update({'queryset': queryset,
+                'td_width': str(100 / self.pictures_in_a_raw - self.pictures_in_a_raw / 16) + '%',
+                'caption': caption
+                })
+        self.ctx.update({'request': request})
+        return render(request, self.template_name, self.ctx)
 
 
 class LoginView(FormView):
@@ -173,7 +187,7 @@ class LoginView(FormView):
         if user is not None:
             if user.is_active:
                 login(request, user)
-        return HttpResponseRedirect(request.GET.get('next', '/'))
+        return HttpResponseRedirect(request.GET.get('next'))
 
 
 def logoutView(request):
@@ -194,9 +208,9 @@ class LikesView(View):
         picture = get_object_or_404(core_models.Picture, key=key)
         try:
             like = self.model.objects.get(
-                                          picture=picture,
-                                          user=request.user
-                                         )
+                picture=picture,
+                user=request.user
+            )
             like.like = str_bool(request.POST.get('like'))
             like.created = timezone.now()
             form = self.form_class(request.POST, instance=like)
