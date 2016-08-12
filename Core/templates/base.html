@@ -67,7 +67,7 @@
                     <ul class="dropdown-menu" aria-labelledby="drop3">
                         <li><a href="/admin/auth/user/{{user.id}}/change/"><span class="glyphicon glyphicon-briefcase">&nbsp;Profile</span></a></li>
                         <li role="separator" class="divider"></li>
-                        <li><a href="/user/logout/"><span class="glyphicon glyphicon-off">&nbsp;Logout</span></a></li>
+                        <li><a href="/user/logout/?next={{request.get_full_path}}"><span class="glyphicon glyphicon-off">&nbsp;Logout</span></a></li>
                     </ul>
                 </li>
                 {% else %}

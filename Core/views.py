@@ -190,10 +190,14 @@ class LoginView(FormView):
         return HttpResponseRedirect(request.GET.get('next'))
 
 
-def logoutView(request):
-    if request.user.is_authenticated():
-        logout(request)
-        return HttpResponseRedirect('/')
+class LogoutView(FormView):
+    template_name = None
+
+    @method_decorator(login_required)
+    def get(self, request, *args, **kwargs):
+        if request.user.is_authenticated():
+            logout(request)
+            return HttpResponseRedirect(request.GET.get('next'))
 
 class LikesView(View):
     form_class = core_forms.LikesForm

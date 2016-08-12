@@ -31,7 +31,7 @@ from Core import views as core_views
 
 urlpatterns = [
     url(r'^user/login/$', core_views.LoginView.as_view(), name="login-page"),
-    url(r'^user/logout/$', core_views.logoutView, name="logout"),
+    url(r'^user/logout/$', core_views.LogoutView.as_view(), name="logout"),
     url(r'^admin/', admin.site.urls),
     url(r'^popular/$', core_views.PopularView.as_view(), name='popular'),
     url(r'^most-liked/$', core_views.PopularView.as_view(), name='popular'),
