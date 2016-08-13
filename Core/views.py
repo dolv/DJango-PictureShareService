@@ -65,6 +65,7 @@ class PictureUploadView(BaseHeaderMenu, FormView):
         form = self.form_class(request.GET)
         self.ctx.update({'form': form})
         self.ctx.update({'request': request})
+        self.add_queryset_to_ctx(self.ctx)
         return render(request, self.template_name, self.ctx)
 
     @method_decorator(login_required)
@@ -76,6 +77,7 @@ class PictureUploadView(BaseHeaderMenu, FormView):
 
         # str(hashlib.md5(request.FILES['picture'].file.read()).hexdigest())
         self.ctx.update({'form': form})
+        self.ctx.update({'request': request})
         if form.is_valid():
             form.save(commit=True)
             return HttpResponseRedirect(self.request.POST.get('key'))
