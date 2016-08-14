@@ -10,6 +10,7 @@ from Core import forms as core_forms
 from Core import models as core_models
 from django import forms
 from django.contrib.auth.models import User
+from django.db.models import F
 from django.core.urlresolvers import reverse_lazy, reverse
 from django.contrib import auth, messages
 from django.utils import timezone
@@ -103,7 +104,7 @@ class PicturePreviewPageView(LoginRequiredMixin, BaseHeaderMenu, DeleteView):
         if request.path == "/favicon.ico/":
             HttpResponseRedirect("/static/favicon.ico")
         instance = self.model.objects.get(key=key)
-        instance.viewCounter += 1
+        instance.viewCounter = F('viewCounter') + 1
         instance.lastViewTime = timezone.now()
         instance.save()
         number_of_likes = core_models.Likes.objects.filter(picture=instance.id, like=1).count()
