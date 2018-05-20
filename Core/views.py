@@ -11,7 +11,8 @@ from Core import models as core_models
 from django import forms
 from django.contrib.auth.models import User
 from django.db.models import F
-from django.core.urlresolvers import reverse_lazy, reverse
+# from django.core.urlresolvers import reverse_lazy, reverse
+from django.urls import reverse_lazy, reverse
 from django.contrib import auth, messages
 from django.utils import timezone
 from django.utils.decorators import method_decorator

@@ -1,3 +1,4 @@
 Django==1.9.8
-pillow==3.3.0
 sqlparse==0.2.0
+pillow==3.3.0
+

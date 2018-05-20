@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils import timezone
-from django.core.urlresolvers import reverse
+# from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.utils.baseconv import base56
 from random import randint
 from django.conf import settings
