@@ -105,6 +105,7 @@ class PicturePreviewPageView(LoginRequiredMixin, BaseHeaderMenu, DeleteView):
         if request.path == "/favicon.ico/":
             HttpResponseRedirect("/static/favicon.ico")
         instance = self.model.objects.get(key=key)
+        println(F('viewCounter') + 1)
         instance.viewCounter = F('viewCounter') + 1
         instance.lastViewTime = timezone.now()
         instance.save()
