@@ -13,7 +13,7 @@ from Core import models as core_models
 from Core.serializers import UserSerializer, GroupSerializer, PictureListSerializer
 from django import forms
 from django.contrib.auth.models import User
-from django.db.models import F
+from django.db.models import F, ExpressionWrapper, IntegerField
 # from django.core.urlresolvers import reverse_lazy, reverse
 from django.urls import reverse_lazy, reverse
 from django.contrib import auth, messages
@@ -115,6 +115,7 @@ class PicturePreviewPageView(LoginRequiredMixin, BaseHeaderMenu, DeleteView):
         instance.viewCounter = F('viewCounter') + 1
         instance.lastViewTime = timezone.now()
         instance.save()
+        instance = self.model.objects.get(key=key)
         number_of_likes = core_models.Likes.objects.filter(picture=instance.id, like=1).count()
         number_of_dislikes = core_models.Likes.objects.filter(picture=instance.id, like=0).count()
         try:
