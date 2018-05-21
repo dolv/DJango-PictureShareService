@@ -13,11 +13,14 @@ Including another URLconf
     1. Import the include() function: from django.conf.urls import url, include
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
-from django.conf.urls import url
+from django.conf.urls import url, include
 from django.contrib import admin
 from django.conf.urls.static import static
 from django.conf import settings
 from django.http import HttpResponseRedirect
+from rest_framework import routers, serializers, viewsets
+from rest_framework_swagger.views import get_swagger_view
+
 
 from Core import views as core_views
 
@@ -29,13 +32,23 @@ from Core import views as core_views
 # /<key>
 #    страница отдельной картинки
 
+schema_view = get_swagger_view(title='Pastebin API')
+
+router = routers.DefaultRouter()
+router.register(r'users', core_views.UserViewSet, base_name='user')
+router.register(r'groups', core_views.GroupViewSet)
+router.register(r'pictures', core_views.PictureUploadViewSet, base_name='pictures')
+
 urlpatterns = [
+    url(r'^api/v1/', include(router.urls)),
+    url(r'^swagger/v1/$', schema_view),
     url(r'^user/login/$', core_views.LoginView.as_view(), name="login-page"),
     url(r'^user/logout/$', core_views.LogoutView.as_view(), name="logout"),
     url(r'^admin/', admin.site.urls),
     url(r'^popular/$', core_views.PopularView.as_view(), name='popular'),
     url(r'^most-liked/$', core_views.PopularView.as_view(), name='popular'),
     url(r'^update/$', core_views.PictureUpdateView.as_view(), name='picture-update'),
+    url(r'^api/v1/api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     url(r'^$', core_views.PictureUploadView.as_view(), name='home-page'),
     url(r'^([\w\d-]+)/$', core_views.PicturePreviewPageView.as_view(), name='picture-details'),
     url(r'^([\w\d-]+)/like/$', core_views.LikesView.as_view(), name='picture-like'),

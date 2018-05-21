@@ -1,6 +1,8 @@
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth import authenticate, login, logout
+from django.contrib.auth.models import User, Group
+from rest_framework import viewsets
 from django.http import HttpResponseBadRequest
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
@@ -8,6 +10,7 @@ from django.views.generic import FormView, ListView, UpdateView, DeleteView, Vie
 from django.forms import formset_factory
 from Core import forms as core_forms
 from Core import models as core_models
+from Core.serializers import UserSerializer, GroupSerializer, PictureListSerializer
 from django import forms
 from django.contrib.auth.models import User
 from django.db.models import F
@@ -17,6 +20,7 @@ from django.contrib import auth, messages
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.utils.baseconv import base56
+from rest_framework.views import APIView
 from random import randint
 import hashlib
 
@@ -72,9 +76,12 @@ class PictureUploadView(BaseHeaderMenu, FormView):
 
     @method_decorator(login_required)
     def post(self, request, *args, **kwargs):
+        mutable = request.POST._mutable
+        request.POST._mutable = True
         request.POST.__setitem__('key', self.gen_random_key())
         request.POST.__setitem__('uploadTime', timezone.now())
         request.POST.__setitem__('author', request.user.id)
+        request.POST._mutable = mutable
         form = self.form_class(request.POST, request.FILES)
 
         # str(hashlib.md5(request.FILES['picture'].file.read()).hexdigest())
@@ -105,7 +112,6 @@ class PicturePreviewPageView(LoginRequiredMixin, BaseHeaderMenu, DeleteView):
         if request.path == "/favicon.ico/":
             HttpResponseRedirect("/static/favicon.ico")
         instance = self.model.objects.get(key=key)
-        println(F('viewCounter') + 1)
         instance.viewCounter = F('viewCounter') + 1
         instance.lastViewTime = timezone.now()
         instance.save()
@@ -230,3 +236,34 @@ class LikesView(View):
                                                              user=request.user,
                                                              like=str_bool(request.POST.get('like')))
         return HttpResponseRedirect(reverse(self.success_url, args=[key]))
+
+class UserViewSet(LoginRequiredMixin, viewsets.ModelViewSet):
+    """
+    API endpoint that allows users to be viewed or edited.
+    """
+    queryset = User.objects.all().order_by('-date_joined')
+    serializer_class = UserSerializer
+
+
+class GroupViewSet(LoginRequiredMixin, viewsets.ModelViewSet):
+    """
+    API endpoint that allows groups to be viewed or edited.
+    """
+    queryset = Group.objects.all()
+    serializer_class = GroupSerializer
+
+class PictureUploadViewSet(LoginRequiredMixin, viewsets.ModelViewSet):
+    """
+    API endpoint that allows pictures View.
+    """
+    model = core_models.Picture
+    queryset = model.objects.all()
+    serializer_class = PictureListSerializer
+    page_size_query_param = "page_size"
+    
+    def get_paginate_by(self, queryset):
+        """
+        Paginate by specified value in querystring, or use default class property value.
+        """
+        return self.request.GET.get('paginate_by', self.paginate_by)
+        
