@@ -15,6 +15,9 @@ class GroupSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('url', 'name')
 
 class PictureListSerializer(serializers.ModelSerializer):
+    rootApiURL = serializers.SerializerMethodField()
+    def get_rootApiURL(self, obj):
+        return "/api/v1/"
     class Meta:
         model = Picture
         # fields = ('picture', 'description', 'key', 'uploadTime', 'lastViewTime', 'viewCounter', 'author')

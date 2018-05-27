@@ -22,10 +22,12 @@ from django.utils.baseconv import base56
 from rest_framework import viewsets
 from rest_framework.views import APIView
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.authentication import SessionAuthentication, BasicAuthentication
 from random import randint
 import hashlib
 from .paginators import StandardResultsSetPagination
-
+from .permissions import IsOwnerOrReadOnly
 # Create your views here.
 
 # Страницы
@@ -263,10 +265,11 @@ class PictureUploadViewSet( viewsets.ModelViewSet):
     queryset = model.objects.all()
     serializer_class = PictureListSerializer
     pagination_class = StandardResultsSetPagination
-    page_size_query_param = "page_size"
-    page_size = 2
+    # permission_classes = (IsAuthenticatedOrReadOnly,IsOwnerOrReadOnly,)
+    permission_classes = (IsAuthenticated,)
+    authentication_classes = (SessionAuthentication, BasicAuthentication)
 
-    
+    # Overriding list method
     # def list(self, request):
     #     page_size = int(self.request.GET.get(self.page_size_query_param, self.page_size))
     #     queryset = self.queryset if page_size == 0 else self.queryset[:page_size]

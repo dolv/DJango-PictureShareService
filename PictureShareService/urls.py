@@ -19,9 +19,9 @@ from django.conf.urls.static import static
 from django.conf import settings
 from django.http import HttpResponseRedirect
 from rest_framework import routers, serializers, viewsets
+from rest_framework.authtoken import views
 from rest_framework_swagger.views import get_swagger_view
-
-
+from rest_framework.schemas import get_schema_view
 from Core import views as core_views
 
 # Страницы
@@ -32,7 +32,8 @@ from Core import views as core_views
 # /<key>
 #    страница отдельной картинки
 
-schema_view = get_swagger_view(title='Pastebin API')
+swagger_view = get_swagger_view(title='Pastebin API')
+schema_view = get_schema_view(title='Pastebin API')
 
 router = routers.DefaultRouter()
 router.register(r'users', core_views.UserViewSet, base_name='user')
@@ -41,7 +42,9 @@ router.register(r'pictures', core_views.PictureUploadViewSet, base_name='picture
 
 urlpatterns = [
     url(r'^api/v1/', include(router.urls)),
-    url(r'^swagger/v1/$', schema_view),
+    url(r'^schema/$', schema_view),
+    url(r'^api-token-auth/', views.obtain_auth_token),
+    url(r'^swagger/v1/$', swagger_view),
     url(r'^user/login/$', core_views.LoginView.as_view(), name="login-page"),
     url(r'^user/logout/$', core_views.LogoutView.as_view(), name="logout"),
     url(r'^admin/', admin.site.urls),
