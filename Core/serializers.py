@@ -15,7 +15,6 @@ class GroupSerializer(serializers.HyperlinkedModelSerializer):
         fields = ('url', 'name')
 
 class PictureListSerializer(serializers.ModelSerializer):
-    
     class Meta:
         model = Picture
         # fields = ('picture', 'description', 'key', 'uploadTime', 'lastViewTime', 'viewCounter', 'author')

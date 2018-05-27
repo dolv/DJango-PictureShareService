@@ -2,7 +2,6 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.models import User, Group
-from rest_framework import viewsets
 from django.http import HttpResponseBadRequest
 from django.http import HttpResponseRedirect
 from django.shortcuts import render, get_object_or_404
@@ -20,9 +19,12 @@ from django.contrib import auth, messages
 from django.utils import timezone
 from django.utils.decorators import method_decorator
 from django.utils.baseconv import base56
+from rest_framework import viewsets
 from rest_framework.views import APIView
+from rest_framework.response import Response
 from random import randint
 import hashlib
+from .paginators import StandardResultsSetPagination
 
 # Create your views here.
 
@@ -253,18 +255,25 @@ class GroupViewSet(LoginRequiredMixin, viewsets.ModelViewSet):
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
 
-class PictureUploadViewSet(LoginRequiredMixin, viewsets.ModelViewSet):
+class PictureUploadViewSet( viewsets.ModelViewSet):
     """
     API endpoint that allows pictures View.
     """
     model = core_models.Picture
     queryset = model.objects.all()
     serializer_class = PictureListSerializer
+    pagination_class = StandardResultsSetPagination
     page_size_query_param = "page_size"
+    page_size = 2
+
     
-    def get_paginate_by(self, queryset):
-        """
-        Paginate by specified value in querystring, or use default class property value.
-        """
-        return self.request.GET.get('paginate_by', self.paginate_by)
+    # def list(self, request):
+    #     page_size = int(self.request.GET.get(self.page_size_query_param, self.page_size))
+    #     queryset = self.queryset if page_size == 0 else self.queryset[:page_size]
+    #     serializer_context = {
+    #         'request': request,
+    #     }
+    #     serializer = PictureListSerializer(queryset, context=serializer_context, many=True)
+    #     return Response(serializer.data)
+
         
