@@ -48,4 +48,4 @@ class LikesForm(forms.ModelForm):
 
     class Meta:
         model = Likes
-        fields = ('picture', 'user', 'like')
+        fields = ('like',)

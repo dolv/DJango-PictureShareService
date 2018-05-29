@@ -79,10 +79,10 @@ The output will look like this:
 Performing system checks...
 
 System check identified no issues (0 silenced).
-August 11, 2016 - 00:15:44
-Django version 1.9.8, using settings 'PictureShareService.settings'
+May 29, 2018 - 15:15:02
+Django version 2.0.5, using settings 'PictureShareService.settings'
 Starting development server at http://127.0.0.1:8000/
-Quit the server with CONTROL-C.
+Quit the server with CTRL-BREAK.
 ```
 
 13. try connecting to http://127.0.0.1:8000/ in web-browser.

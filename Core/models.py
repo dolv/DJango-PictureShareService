@@ -55,6 +55,10 @@ class Likes(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     like = models.BooleanField()
 
+    def __str__(self):
+        from pprint import pprint
+        return str(vars(self))
+
 class PictureWithLikesCount(models.Model):
     picture = models.ImageField(upload_to='media_dir/%Y/%m/%d/%S')
     description = models.CharField(max_length=50, blank=True)

@@ -28,6 +28,7 @@ from random import randint
 import hashlib
 from .paginators import StandardResultsSetPagination
 from .permissions import IsOwnerOrReadOnly
+import pprint
 # Create your views here.
 
 # Страницы
@@ -226,15 +227,20 @@ class LikesView(View):
             return {'True': True, 'False': False}[str_var]
 
         picture = get_object_or_404(core_models.Picture, key=key)
+        user = get_object_or_404(User, username=request.user)
+        
         try:
             like = self.model.objects.get(
                 picture=picture,
-                user=request.user
+                user=user
             )
             like.like = str_bool(request.POST.get('like'))
             like.created = timezone.now()
             form = self.form_class(request.POST, instance=like)
             if form.is_valid():
+                form.save(commit=False)
+                form.picture = picture
+                form.user = user
                 form.save()
         except self.model.DoesNotExist:
             like, created = self.model.objects.get_or_create(picture=picture,
