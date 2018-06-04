@@ -7,6 +7,7 @@ PictureShareServiceVENV/*
 db.sqlite3
 files/*
 .idea/*
+cookies*
 
 # OS generated files #
 ######################
