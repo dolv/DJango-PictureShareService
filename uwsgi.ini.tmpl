@@ -4,28 +4,28 @@
 ini = :base
 
 # %d is the dir this configuration file is in
-socket = %dapp.sock
+socket = {{.Env.APP_SOCKET_FILE}}
 master = true
-processes = 4
+processes = {{.Env.APP_PROCESSES_NUM}}
 
 [dev]
 ini = :base
 # socket (uwsgi) is not the same as http, nor http-socket
-socket = :8001
+socket = :{{.Env.APP_WEBSOCKET_PORT}}
 
 
 [local]
 ini = :base
 http = :8000
 # set the virtual env to use
-home=/app/VirtualENV
+home={{.Env.APP_VIRTUALENV_PATH}}
 
 
 [base]
 # chdir to the folder of this config file, plus app/website
-chdir = %dapp/
+chdir = {{.Env.APP_DIR}}
 # load the module from wsgi.py, it is a python path from 
 # the directory above.
-module=website.wsgi:application
-# allow anyone to connect to the socket. This is very permissive
+module=PictureShareService.wsgi.application
+# allow anyone to connect to the socket. This is very permissive chmod-socket=666
 chmod-socket=666

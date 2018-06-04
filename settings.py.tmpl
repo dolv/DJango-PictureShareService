@@ -20,10 +20,10 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/2.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = {{ .Env.DJango_SECRET_KEY }}
+SECRET_KEY = {{ .Env.APP_SECRET_KEY }}
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = {{.Env.DJANGO_DEBUG}}
+DEBUG = {{.Env.APP_DEBUG}}
 
 ALLOWED_HOSTS = []
 
@@ -85,7 +85,7 @@ WSGI_APPLICATION = 'PictureShareService.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        'NAME': os.path.join(BASE_DIR, '{{.Env.APP_SQLITE3_LOCATION}}'.replace(BASE_DIR)),
     }
 }
 
@@ -141,15 +141,15 @@ PROJECT_ROOT = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.9/howto/static-files/
 
-STATIC_URL = '/static/'
+STATIC_URL = '{{.Env.APP_STATIC_URL}}'
 
 STATICFILES_DIRS = [
-    os.path.join(PROJECT_ROOT, "static"),
+    os.path.join(PROJECT_ROOT, '{{.Env.APP_STATIC_LOCATION}}'.replace(PROJECT_ROOT)),
 ]
 
-MEDIA_ROOT = os.path.join(PROJECT_ROOT, 'files')
+MEDIA_ROOT = os.path.join(PROJECT_ROOT, '{{.Env.APP_MEDIA_LOCATION}}'.replace(PROJECT_ROOT))
 
-MEDIA_URL = '/files/'
+MEDIA_URL = '{{.Env.APP_MEDIA_URL}}'
 
 LOGIN_URL = "/user/login/"
 
@@ -157,10 +157,10 @@ LOGIN_URL = "/user/login/"
 CORS_ORIGIN_ALLOW_ALL = False
 
 CORS_ORIGIN_WHITELIST = (
-    {{ .Env.DJANGO_CORS_ORIGIN_WHITELIST }}
+    {{ .Env.APP_CORS_ORIGIN_WHITELIST }}
 )
 
 # SECURITY MIDDLEWARE SETTINGS
-SECURE_SSL_REDIRECT = {{ .Env.DJANGO_SECURE_SSL_REDIRECT }}
-SESSION_COOKIE_SECURE = {{ .Env.DJANGO_SESSION_COOKIE_SECURE }}
+SECURE_SSL_REDIRECT = {{ .Env.APP_SECURE_SSL_REDIRECT }}
+SESSION_COOKIE_SECURE = {{ .Env.APP_SESSION_COOKIE_SECURE }}
 CSRF_COOKIE_SECURE = True
