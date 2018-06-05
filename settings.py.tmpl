@@ -145,7 +145,7 @@ STATIC_URL = '{{.Env.APP_STATIC_URL}}'
 STATIC_ROOT = '{{.Env.APP_STATIC_LOCATION}}'
 
 STATICFILES_DIRS = [
-    os.path.join(PROJECT_ROOT, '{{.Env.APP_STATIC_LOCATION}}'),
+    os.path.join(PROJECT_ROOT, 'static'),
 ]
 
 MEDIA_ROOT = os.path.join(PROJECT_ROOT, '{{.Env.APP_MEDIA_LOCATION}}')
