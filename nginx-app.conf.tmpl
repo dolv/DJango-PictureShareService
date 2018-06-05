@@ -5,7 +5,7 @@ upstream django {
 {{if .Env.APP_SOCKET_FILE}}
     server unix:{{.Env.APP_SOCKET_FILE}}; # for a file socket
 {{else}}
-    server {{.Env.PP_WEBSOCKET_HOST}}:{{.Env.APP_WEBSOCKET_PORT}}; # for a web port socket (we'll use this first)
+    server {{.Env.APP_WEBSOCKET_HOST}}:{{.Env.APP_WEBSOCKET_PORT}}; # for a web port socket (we'll use this first)
 {{end}}
 }
 

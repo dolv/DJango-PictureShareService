@@ -14,11 +14,11 @@ ini = :base
 socket = :{{.Env.APP_WEBSOCKET_PORT}}
 
 
-[local]
+[http]
 ini = :base
 http = :8000
-# set the virtual env to use
-home={{.Env.APP_VIRTUALENV_PATH}}
+socket = {{.Env.APP_SOCKET_FILE}}
+
 
 
 [base]
@@ -26,6 +26,11 @@ home={{.Env.APP_VIRTUALENV_PATH}}
 chdir = {{.Env.APP_DIR}}
 # load the module from wsgi.py, it is a python path from 
 # the directory above.
-module=PictureShareService.wsgi.application
+module=PictureShareService.wsgi:application
 # allow anyone to connect to the socket. This is very permissive chmod-socket=666
-chmod-socket=666
+chmod-socket={{.Env.UWSGI_CHMOD_SOCKET}}
+# set the virtual env to use
+home={{.Env.APP_VIRTUALENV_PATH}}
+#route = {{.Env.APP_STATIC_URL}}rest_framework.* last:
+route = {{.Env.APP_STATIC_URL}}(.*) static:{{.Env.APP_STATIC_LOCATION}}/$1
+route = {{.Env.APP_MEDIA_URL}}(.*) static:{{.Env.APP_MEDIA_LOCATION}}/$1

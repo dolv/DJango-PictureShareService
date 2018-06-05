@@ -85,7 +85,7 @@ WSGI_APPLICATION = 'PictureShareService.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': os.path.join(BASE_DIR, '{{.Env.APP_SQLITE3_LOCATION}}'.replace(BASE_DIR)),
+        'NAME': os.path.join(BASE_DIR, '{{.Env.APP_SQLITE3_LOCATION}}'),
     }
 }
 
@@ -142,12 +142,13 @@ PROJECT_ROOT = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
 # https://docs.djangoproject.com/en/1.9/howto/static-files/
 
 STATIC_URL = '{{.Env.APP_STATIC_URL}}'
+STATIC_ROOT = '{{.Env.APP_STATIC_LOCATION}}'
 
 STATICFILES_DIRS = [
-    os.path.join(PROJECT_ROOT, '{{.Env.APP_STATIC_LOCATION}}'.replace(PROJECT_ROOT)),
+    os.path.join(PROJECT_ROOT, '{{.Env.APP_STATIC_LOCATION}}'),
 ]
 
-MEDIA_ROOT = os.path.join(PROJECT_ROOT, '{{.Env.APP_MEDIA_LOCATION}}'.replace(PROJECT_ROOT))
+MEDIA_ROOT = os.path.join(PROJECT_ROOT, '{{.Env.APP_MEDIA_LOCATION}}')
 
 MEDIA_URL = '{{.Env.APP_MEDIA_URL}}'
 
@@ -163,4 +164,4 @@ CORS_ORIGIN_WHITELIST = (
 # SECURITY MIDDLEWARE SETTINGS
 SECURE_SSL_REDIRECT = {{ .Env.APP_SECURE_SSL_REDIRECT }}
 SESSION_COOKIE_SECURE = {{ .Env.APP_SESSION_COOKIE_SECURE }}
-CSRF_COOKIE_SECURE = True
+CSRF_COOKIE_SECURE = {{ .Env.CSRF_COOKIE_SECURE }}
