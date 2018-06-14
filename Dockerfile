@@ -19,12 +19,8 @@ RUN mkdir -p ${APP_DIR} ${APP_VIRTUALENV_PATH} ${DB_DIR}\
 	  nginx \
 	  supervisor \
 	  sqlite3 \
-<<<<<<< HEAD
-	&& pip3 install -U pip setuptools urllib3 pyopenssl ndg-httpsclient pyasn1\
-=======
 	&& pip3 install -U pip setuptools urllib3 pyopenssl ndg-httpsclient pyasn1 \
 	&& pip install --upgrade pip setuptools \
->>>>>>> 210f875aedb3249efa4d989ae13615cd393d86a8
     && rm -rf /var/lib/apt/lists/* \
 # install uwsgi now because it takes a little while
     && pip3 install uwsgi \
