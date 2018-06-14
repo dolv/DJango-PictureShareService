@@ -88,3 +88,21 @@ Quit the server with CTRL-BREAK.
 13. try connecting to http://127.0.0.1:8000/ in web-browser.
 
 Have fun...
+
+## Using with Dokcer
+1. Build docker image e.g. like this:
+```
+docker build --force-rm --rm -t picture-share-service .
+```
+
+2. Run the container mapping local folder for persistance data.
+```
+docker run --rm --name picture-service -p 8080:8000 --env-file ./EnvVars/develop -v /app/DB:/app/DB -v /app/test_pictures:/app/media -v /app/test_pictures:/app/static picture-share-service 
+```
+3. Initialise the db, create superuser for the database and collect staticfiles.
+```
+docker exec -ti picture-service /bin/bash -c ". ../VirtualENV/bin/activate && python3 manage.py migrate"
+docker exec -ti picture-service /bin/bash -c ". ../VirtualENV/bin/activate && python3 manage.py createsuperuser"
+docker exec -ti picture-service /bin/bash -c ". ../VirtualENV/bin/activate && python3 manage.py collectstatic"
+```
+4. Connect to your application via http://localhost:8080/

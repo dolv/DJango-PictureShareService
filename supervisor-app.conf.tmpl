@@ -1,5 +1,5 @@
 [program:app-uwsgi]
-command = /usr/local/bin/uwsgi --ini {{ UWSGI_INI_PATH }}
+command = /usr/local/bin/uwsgi --ini {{ .Env.UWSGI_INI_PATH }}
 
 [program:nginx-PictureShareService]
 command = /usr/sbin/nginx
