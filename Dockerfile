@@ -20,7 +20,7 @@ RUN apt-get update \
 	  nginx \
 	  supervisor \
 	  sqlite3 \
-	&& pip3 install -U pip setuptools \
+	&& pip3 install -U pip setuptools urllib3 pyopenssl ndg-httpsclient pyasn1\
     && rm -rf /var/lib/apt/lists/* \
 # install uwsgi now because it takes a little while
     && pip3 install uwsgi \
