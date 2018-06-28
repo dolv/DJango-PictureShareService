@@ -6,11 +6,17 @@ from django.forms.formsets import formset_factory
 class PictureUploadForm(forms.ModelForm):
     """Upload files with this form"""
     picture = forms.ImageField()
-    description = forms.CharField(widget=forms.TextInput(attrs={'class': 'form-control',
-                                                                'placeholder': 'Picture description goes here.'}),
-                                  required=False)
-    key = forms.SlugField(widget=forms.HiddenInput(),
-                          required=False)
+    description = forms.CharField(
+        widget=forms.TextInput(
+            attrs={
+                'class': 'form-control',
+                'placeholder': 'Picture description goes here.'
+            }
+        ),
+        required=False)
+    key = forms.SlugField(
+        widget=forms.HiddenInput(),
+        required=False)
 
     class Meta:
         model = Picture
@@ -19,11 +25,14 @@ class PictureUploadForm(forms.ModelForm):
 
 class PictureDetailsForm(forms.ModelForm):
     """Show picture details with this form"""
-    description = forms.Textarea(attrs={'class': 'form-control',
-                                        'align': 'left',
-                                        'style': 'white-space: normal; '
-                                                 'text-align: justify;'},
-                                 )
+    description = forms.Textarea(
+        attrs={
+            'class': 'form-control',
+            'align': 'left',
+            'style': 'white-space: normal; '
+            'text-align: justify;'
+        },
+    )
     key = forms.SlugField(widget=forms.HiddenInput(),
                           required=False)
 
