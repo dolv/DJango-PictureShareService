@@ -12,6 +12,13 @@ https://docs.djangoproject.com/en/2.0/ref/settings/
 """
 
 import os
+from dotenv import dotenv_values
+from pathlib import Path
+
+from PictureShareService import common
+from .common import EnvVars
+
+config = EnvVars('DJANGO_ENVIRONMENT')
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -21,13 +28,15 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # See https://docs.djangoproject.com/en/2.0/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '*d+)ik(ywkov@c84l+mg#3y95ldd#$o64cv-ceygwufyl4y241'
+SECRET_KEY = config.get_value(
+    'SECRET_KEY',
+    '*d+)ik(ywkov@c84l+mg#3y95ldd#$o64cv-ceygwufyl4y241'
+)
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = config.get_value('DEBUG', False)
 
 ALLOWED_HOSTS = []
-
 
 # Application definition
 
@@ -39,6 +48,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'djangosecure',
+    'sslserver',
     'rest_framework',
     'rest_framework.authtoken',
     'rest_framework_swagger',
@@ -143,43 +153,63 @@ PROJECT_ROOT = os.path.abspath(os.path.dirname(os.path.dirname(__file__)))
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/1.9/howto/static-files/
 
-STATIC_URL = '/static/'
+STATIC_URL = config.get_value('STATIC_URL','/static/')
+STATIC_ROOT = config.get_value(
+    'STATIC_ROOT',
+    '/var/www/PictureShareService/static/'
+)
 
 STATICFILES_DIRS = [
     os.path.join(PROJECT_ROOT, "static"),
 ]
 
-MEDIA_ROOT = os.path.join(PROJECT_ROOT, 'files')
+MEDIA_ROOT = config.get_value(
+    'MEDIA_ROOT',
+    os.path.join(PROJECT_ROOT, 'files')
+)
 
-MEDIA_URL = '/files/'
+MEDIA_URL = config.get_value('MEDIA_URL','/files/')
 
 LOGIN_URL = "/user/login/"
 
 # CORS_ORIGIN_ALLOW_ALL = True
 CORS_ORIGIN_ALLOW_ALL = False
 
-CORS_ORIGIN_WHITELIST = (
-    'localhost:4200',
+CORS_ORIGIN_WHITELIST = config.get_value(
+    'CORS_ORIGIN_WHITELIST',
+    ('localhost:4200',)
 )
+
+ALLOWED_HOSTS = config.get_value(
+    'ALLOWED_HOSTS',
+    'localhost,127.0.0.1'
+).split(',')
 
 ############### SECURITY MIDDLEWARE SETTINGS ######################
 # all non-SSL requests should be permanently redirected to SSL.
-SECURE_SSL_REDIRECT = True
+SECURE_SSL_REDIRECT = config.get_value('SECURE_SSL_REDIRECT', True)
 SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-# Set SESSION_COOKIE_SECURE and SESSION_COOKIE_HTTPONLY to True if you are using django.contrib.sessions.
-# These settings are not part of django-secure, but they should be used if running a secure site, and the 
-# checksecure management command will check their values.
-SESSION_COOKIE_SECURE = False
-CSRF_COOKIE_SECURE = True
+# Set SESSION_COOKIE_SECURE and SESSION_COOKIE_HTTPONLY to True if you are using
+# django.contrib.sessions. # These settings are not part of django-secure, but
+# they should be used if running a secure site, and the checksecure management
+# command will check their values.
+SESSION_COOKIE_SECURE = config.get_value('SESSION_COOKIE_SECURE', False)
+CSRF_COOKIE_SECURE = config.get_value('CSRF_COOKIE_SECURE', True)
 
 ## HSTS SETTINGS
 # HSTS stands for HTTP Strict Transport Security
 # HSTS mechanism overview http://en.wikipedia.org/wiki/Strict_Transport_Security
-SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+SECURE_HSTS_INCLUDE_SUBDOMAINS = config.get_value(
+    'SECURE_HSTS_INCLUDE_SUBDOMAINS',
+    True
+)
 SECURE_HSTS_SECONDS = 20
-# Set the SECURE_BROWSER_XSS_FILTER setting to True, if you want to enable the browser’s XSS filtering protections.
-SECURE_BROWSER_XSS_FILTER = True
-#Set the SECURE_FRAME_DENY setting to True, if you want to prevent framing of your pages and protect them from clickjacking.
-SECURE_FRAME_DENY = True
-#Set the SECURE_CONTENT_TYPE_NOSNIFF setting to True, if you want to prevent the browser from guessing asset content types.
-SECURE_CONTENT_TYPE_NOSNIFF = True
+# Set the SECURE_BROWSER_XSS_FILTER setting to True, if you want to enable the
+# browser’s XSS filtering protections.
+SECURE_BROWSER_XSS_FILTER = config.get_value('SECURE_BROWSER_XSS_FILTER', True)
+#Set the SECURE_FRAME_DENY setting to True, if you want to prevent framing of
+# your pages and protect them from clickjacking.
+SECURE_FRAME_DENY = config.get_value('SECURE_FRAME_DENY', True)
+#Set the SECURE_CONTENT_TYPE_NOSNIFF setting to True, if you want to prevent
+# the browser from guessing asset content types.
+SECURE_CONTENT_TYPE_NOSNIFF = config.get_value('SECURE_CONTENT_TYPE_NOSNIFF', True)
