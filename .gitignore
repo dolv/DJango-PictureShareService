@@ -7,7 +7,6 @@ PictureShareServiceVENV/*
 *~
 db.sqlite3
 files/*
-.idea/*
 cookies*
 
 # OS generated files #
@@ -19,3 +18,8 @@ cookies*
 .Trashes
 ehthumbs.db
 Thumbs.db
+
+# IDE generated files #
+#######################
+.vscode/*
+.idea/*
