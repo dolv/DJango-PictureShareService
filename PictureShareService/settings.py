@@ -193,7 +193,8 @@ SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
 # django.contrib.sessions. # These settings are not part of django-secure, but
 # they should be used if running a secure site, and the checksecure management
 # command will check their values.
-SESSION_COOKIE_SECURE = config.get_value('SESSION_COOKIE_SECURE', False)
+# SESSION_COOKIE_HTTPONLY = config.get_value('SESSION_COOKIE_HTTPONLY', True)
+SESSION_COOKIE_SECURE = config.get_value('SESSION_COOKIE_SECURE', True)
 CSRF_COOKIE_SECURE = config.get_value('CSRF_COOKIE_SECURE', True)
 
 ## HSTS SETTINGS
