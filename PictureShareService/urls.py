@@ -13,7 +13,7 @@ Including another URLconf
     1. Import the include() function: from django.conf.urls import url, include
     2. Add a URL to urlpatterns:  url(r'^blog/', include('blog.urls'))
 """
-from django.conf.urls import url, include
+from django.urls import re_path, include
 from django.contrib import admin
 from django.conf.urls.static import static
 from django.conf import settings
@@ -36,24 +36,24 @@ swagger_view = get_swagger_view(title='Pastebin API')
 schema_view = get_schema_view(title='Pastebin API')
 
 router = routers.DefaultRouter()
-router.register(r'users', core_views.UserViewSet, base_name='user')
+router.register(r'users', core_views.UserViewSet, basename='user')
 router.register(r'groups', core_views.GroupViewSet)
-router.register(r'pictures', core_views.PictureUploadViewSet, base_name='pictures')
+router.register(r'pictures', core_views.PictureUploadViewSet, basename='pictures')
 
 urlpatterns = [
-    url(r'^api/v1/', include(router.urls)),
-    url(r'^schema/$', schema_view),
-    url(r'^api-token-auth/', views.obtain_auth_token),
-    url(r'^swagger/v1/$', swagger_view),
-    url(r'^user/login/$', core_views.LoginView.as_view(), name="login-page"),
-    url(r'^user/logout/$', core_views.LogoutView.as_view(), name="logout"),
-    url(r'^admin/', admin.site.urls),
-    url(r'^popular/$', core_views.PopularView.as_view(), name='popular'),
-    url(r'^most-liked/$', core_views.PopularView.as_view(), name='popular'),
-    url(r'^update/$', core_views.PictureUpdateView.as_view(), name='picture-update'),
-    url(r'^api/v1/api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-    url(r'^$', core_views.PictureUploadView.as_view(), name='home-page'),
-    url(r'^([\w\d-]+)/$', core_views.PicturePreviewPageView.as_view(), name='picture-details'),
-    url(r'^([\w\d-]+)/like/$', core_views.LikesView.as_view(), name='picture-like'),
+    re_path(r'^api/v1/', include(router.urls)),
+    re_path(r'^schema/$', schema_view),
+    re_path(r'^api-token-auth/', views.obtain_auth_token),
+    re_path(r'^swagger/v1/$', swagger_view),
+    re_path(r'^user/login/$', core_views.LoginView.as_view(), name="login-page"),
+    re_path(r'^user/logout/$', core_views.LogoutView.as_view(), name="logout"),
+    re_path(r'^admin/', admin.site.urls),
+    re_path(r'^popular/$', core_views.PopularView.as_view(), name='popular'),
+    re_path(r'^most-liked/$', core_views.PopularView.as_view(), name='popular'),
+    re_path(r'^update/$', core_views.PictureUpdateView.as_view(), name='picture-update'),
+    re_path(r'^api/v1/api-auth/', include('rest_framework.urls', namespace='rest_framework')),
+    re_path(r'^$', core_views.PictureUploadView.as_view(), name='home-page'),
+    re_path(r'^([\w\d-]+)/$', core_views.PicturePreviewPageView.as_view(), name='picture-details'),
+    re_path(r'^([\w\d-]+)/like/$', core_views.LikesView.as_view(), name='picture-like'),
     ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
