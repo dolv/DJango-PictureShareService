@@ -18,7 +18,6 @@ class EnvVars:
         env_path = Path('EnvVars/%s.env' % (DJANGO_ENVIRONMENT))
         return dotenv_values(dotenv_path=env_path, verbose=True)
 
-
     def get_value(
             self,
             var_name,
