@@ -8,7 +8,7 @@ configparser==5.2.0
 coreapi==2.3.3
 coreapi-cli==1.0.9
 coreschema==0.0.4
-Django==4.0.7
+Django==4.0.9
 django-cors-headers==3.11.0
 django-filter==21.1
 django-rest-swagger==2.2.0
